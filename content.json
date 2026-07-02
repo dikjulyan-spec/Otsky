@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "siteName": "OTSKY Official Store",
+    "title": "OTSKY Official Store | Daily Wear Lokal",
+    "description": "OTSKY adalah brand fashion lokal untuk daily wear: kaos, polo, kemeja, celana, backpack, dan aksesori. Belanja original hanya melalui kanal resmi OTSKY.",
+    "keywords": "OTSKY, OTSKY official store, kaos pria lokal, polo shirt pria, kemeja pria casual, celana pria, backpack pria, brand fashion lokal",
+    "ogImage": "assets/otsky-og-image.jpg"
+  },
+  "brand": {
+    "name": "OTSKY",
+    "tagline": "Daily Wear Lokal",
+    "logoText": "OTSKY",
+    "established": "Sejak 2015",
+    "announcement": "Belanja original hanya melalui kanal resmi OTSKY.",
+    "whatsappUrl": "https://wa.me/6281234567890",
+    "instagramUrl": "https://www.instagram.com/otsky_store"
+  },
+  "navigation": [
+    { "label": "Koleksi", "url": "#koleksi" },
+    { "label": "Best Seller", "url": "#produk" },
+    { "label": "Promo", "url": "#promo" },
+    { "label": "Tentang", "url": "#tentang" },
+    { "label": "Official Store", "url": "#official-store" }
+  ],
+  "hero": {
+    "eyebrow": "Brand lokal Lampung sejak 2015",
+    "title": "Daily Wear Lokal untuk Gaya Santai Setiap Hari",
+    "description": "Temukan kaos, polo shirt, kemeja, celana, backpack, dan aksesori original OTSKY melalui kanal resmi kami.",
+    "primaryButton": { "label": "Belanja Sekarang", "url": "#produk" },
+    "secondaryButton": { "label": "Lihat Official Store", "url": "#official-store" },
+    "image": "",
+    "imageAlt": "Model menggunakan outfit OTSKY",
+    "badges": ["Kaos", "Polo", "Kemeja", "Celana", "Backpack"],
+    "stats": [
+      { "number": "741K+", "label": "Pengikut Shopee" },
+      { "number": "4.8", "label": "Rating toko" },
+      { "number": "2015", "label": "Mulai hadir" }
+    ]
+  },
+  "trust": [
+    { "title": "Brand lokal sejak 2015", "description": "Berawal dari Lampung dan berkembang melalui kanal resmi online." },
+    { "title": "Official store multi-platform", "description": "Tersedia di website, Shopee, Lazada, TikTok Shop, Tokopedia, Blibli, Instagram, dan WhatsApp." },
+    { "title": "Produk harian lengkap", "description": "Pilihan kaos, polo, kemeja, celana, backpack, dan aksesori untuk daily outfit." },
+    { "title": "Harga accessible", "description": "Koleksi casual wear dengan pilihan bundling dan promo official store." }
+  ],
+  "categories": {
+    "eyebrow": "Shop by category",
+    "title": "Pilih kategori favorit",
+    "description": "Mulai dari outfit harian sampai aksesori pendukung, semua diarahkan ke kanal belanja resmi.",
+    "items": [
+      { "icon": "TS", "title": "T-Shirts", "description": "Kaos cotton combed untuk daily wear.", "url": "#produk", "image": "" },
+      { "icon": "PS", "title": "Polo Shirts", "description": "Polo casual untuk tampilan rapi santai.", "url": "#produk", "image": "" },
+      { "icon": "KM", "title": "Kemeja", "description": "Kemeja basic, oversize, dan casual look.", "url": "#produk", "image": "" },
+      { "icon": "CL", "title": "Celana", "description": "Chino, denim, corduroy, dan shorts.", "url": "#produk", "image": "" },
+      { "icon": "BP", "title": "Backpacks", "description": "Tas untuk sekolah, kuliah, kerja, dan travel ringan.", "url": "#produk", "image": "" },
+      { "icon": "AC", "title": "Accessories", "description": "Topi, paper bag, dan pelengkap outfit.", "url": "#produk", "image": "" }
+    ]
+  },
+  "products": {
+    "eyebrow": "Best seller",
+    "title": "Produk yang paling sering dicari",
+    "description": "Gunakan bagian ini untuk menampilkan produk unggulan, harga promo, dan CTA ke marketplace resmi.",
+    "cta": { "label": "Lihat semua produk", "url": "#official-store" },
+    "items": [
+      { "badge": "Best Seller", "name": "Kaos Pria Font Signature", "category": "T-Shirt", "price": "Rp59.900", "description": "Cotton combed 24s, cocok untuk daily outfit.", "url": "#official-store", "image": "" },
+      { "badge": "Promo", "name": "Kaos Pria Two Strip", "category": "T-Shirt", "price": "Rp64.900", "description": "Desain basic sporty dengan pilihan warna mudah dipadukan.", "url": "#official-store", "image": "" },
+      { "badge": "New Look", "name": "Kemeja Pria Basic Toyobo", "category": "Kemeja", "price": "Rp119.900", "description": "Kemeja casual untuk kampus, kerja santai, atau weekend.", "url": "#official-store", "image": "" },
+      { "badge": "Favorite", "name": "Backpack Sekolah/Kuliah", "category": "Backpack", "price": "Rp149.900", "description": "Tas harian dengan ruang cukup untuk aktivitas produktif.", "url": "#official-store", "image": "" }
+    ]
+  },
+  "promos": {
+    "eyebrow": "Official deals",
+    "title": "Promo bundling dan diskon official",
+    "description": "Bagian promo bisa diubah kapan pun dari admin, tanpa menyentuh HTML.",
+    "items": [
+      { "title": "Buy 1 Get 2", "description": "Paket hemat untuk koleksi kaos pilihan.", "label": "Limited Deal", "url": "#official-store" },
+      { "title": "Buy 1 Get 3", "description": "Bundling produk tertentu selama stok tersedia.", "label": "Bundle", "url": "#official-store" },
+      { "title": "Flash Sale Official Store", "description": "Cek kanal resmi untuk harga terbaru dan voucher aktif.", "label": "Hot", "url": "#official-store" }
+    ]
+  },
+  "story": {
+    "eyebrow": "Tentang OTSKY",
+    "title": "Brand fashion lokal yang tumbuh dari daily wear.",
+    "paragraphs": [
+      "OTSKY adalah brand fashion lokal asal Lampung yang hadir sejak 2015.",
+      "Dengan semangat Offer The Best Service & Kindness to You, OTSKY menghadirkan pilihan outfit harian yang nyaman, mudah dipadukan, dan accessible untuk banyak kalangan."
+    ],
+    "highlights": [
+      "Produk original melalui kanal resmi",
+      "Pilihan kategori casual wear yang luas",
+      "Fokus pada kualitas, desain relevan, dan layanan ramah"
+    ],
+    "image": "",
+    "imageAlt": "Brand story OTSKY"
+  },
+  "lookbook": {
+    "eyebrow": "Style guide",
+    "title": "Inspirasi outfit harian",
+    "description": "Gunakan section ini untuk campaign, lookbook, atau foto UGC dari Instagram/TikTok.",
+    "items": [
+      { "title": "Campus Casual", "description": "Kaos basic, chino, dan backpack untuk aktivitas kampus.", "image": "" },
+      { "title": "Weekend Fit", "description": "Oversize tee dan shorts untuk gaya santai akhir pekan.", "image": "" },
+      { "title": "Smart Casual", "description": "Polo atau kemeja basic untuk look rapi tanpa ribet.", "image": "" }
+    ]
+  },
+  "channels": {
+    "eyebrow": "Official store",
+    "title": "Belanja OTSKY hanya melalui kanal resmi",
+    "description": "Pilih kanal favoritmu. Pastikan membeli dari official store untuk menghindari seller palsu.",
+    "items": [
+      { "name": "Website", "description": "Katalog dan brand hub resmi", "url": "https://otskyofficial.com/" },
+      { "name": "Shopee", "description": "Official store marketplace", "url": "https://shopee.co.id/otsky" },
+      { "name": "Lazada", "description": "Belanja via Lazada", "url": "#" },
+      { "name": "TikTok Shop", "description": "Live shopping dan promo", "url": "#" },
+      { "name": "Tokopedia", "description": "Checkout lewat Tokopedia", "url": "#" },
+      { "name": "Blibli", "description": "Belanja via Blibli", "url": "#" },
+      { "name": "Instagram", "description": "Update campaign dan katalog", "url": "https://www.instagram.com/otsky_store" },
+      { "name": "WhatsApp CS", "description": "Bantuan ukuran, stok, dan order", "url": "https://wa.me/6281234567890" }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Pertanyaan yang sering ditanyakan",
+    "description": "Edit jawaban ini sesuai kebijakan terbaru: ukuran, retur, pengiriman, dan kanal pembelian.",
+    "items": [
+      { "question": "Apakah produk OTSKY original?", "answer": "Ya. Pastikan pembelian dilakukan melalui kanal resmi OTSKY yang tercantum di website ini." },
+      { "question": "Bagaimana cara memilih ukuran?", "answer": "Cek size chart pada halaman produk atau hubungi WhatsApp CS untuk rekomendasi ukuran berdasarkan tinggi dan berat badan." },
+      { "question": "Apakah bisa tukar ukuran?", "answer": "Kebijakan tukar ukuran mengikuti syarat dan ketentuan kanal pembelian. Simpan bukti transaksi dan hubungi CS sesegera mungkin." },
+      { "question": "Di mana bisa melihat promo terbaru?", "answer": "Promo terbaru tersedia di official website, Shopee, TikTok Shop, dan kanal resmi lain yang tercantum di halaman ini." }
+    ]
+  },
+  "footer": {
+    "description": "Daily wear lokal untuk gaya santai setiap hari. Belanja original hanya melalui kanal resmi OTSKY.",
+    "copyright": "© 2026 OTSKY. All rights reserved.",
+    "links": [
+      { "label": "Size Guide", "url": "#faq" },
+      { "label": "Official Store", "url": "#official-store" },
+      { "label": "WhatsApp CS", "url": "https://wa.me/6281234567890" },
+      { "label": "Instagram", "url": "https://www.instagram.com/otsky_store" }
+    ]
+  }
+}
