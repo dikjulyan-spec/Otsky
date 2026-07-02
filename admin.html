@@ -1,1503 +1,716 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OTSKY Content Editor</title>
-  <meta name="robots" content="noindex, nofollow" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Minimal OTSKY</title>
+  <meta name="robots" content="noindex,nofollow">
+  <script src="config.js"></script>
   <style>
     :root {
-      --bg: #f4f1ea;
-      --panel: #ffffff;
-      --panel-soft: #fffaf2;
-      --text: #151515;
-      --muted: #6b655d;
-      --line: rgba(21, 21, 21, 0.12);
+      --bg: #f4efe7;
+      --card: #fffaf4;
+      --card-2: #ffffff;
+      --text: #171717;
+      --muted: #6c665d;
+      --line: rgba(23, 23, 23, .12);
       --dark: #111111;
-      --accent: #d7a354;
-      --accent-dark: #8d6236;
+      --ok: #0f7b45;
+      --warn: #9a5a00;
       --danger: #b42318;
-      --success: #217a47;
       --radius: 18px;
-      --shadow: 0 16px 42px rgba(17, 17, 17, 0.08);
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --shadow: 0 18px 60px rgba(0,0,0,.1);
+      --max: 1180px;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 20% 0%, rgba(231,199,139,.34), transparent 34rem), var(--bg);
       color: var(--text);
-      background: var(--bg);
-      line-height: 1.45;
     }
     a { color: inherit; }
     button, input, textarea, select { font: inherit; }
-    button { cursor: pointer; }
-    .app { min-height: 100vh; display: grid; grid-template-columns: 286px minmax(0, 1fr); }
-    .sidebar {
-      position: sticky; top: 0; height: 100vh; overflow: auto;
-      padding: 20px; border-right: 1px solid var(--line); background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(18px);
+    .wrap { width: min(var(--max), calc(100% - 32px)); margin-inline: auto; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(244,239,231,.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
     }
-    .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-    .logo-mark {
-      display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px;
-      background: #111; color: #fff; font-weight: 950; letter-spacing: -0.06em;
-    }
-    .logo strong { display: block; font-size: 18px; letter-spacing: -0.04em; }
-    .logo span { display: block; color: var(--muted); font-size: 12px; font-weight: 750; }
-    .nav-section-label { margin: 22px 0 8px; color: var(--muted); font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
-    .section-tabs { display: grid; gap: 8px; }
-    .section-tab {
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      width: 100%; border: 1px solid transparent; background: transparent; color: var(--muted);
-      padding: 11px 12px; border-radius: 14px; text-align: left; font-weight: 850;
-    }
-    .section-tab:hover { background: rgba(17, 17, 17, 0.04); color: var(--text); }
-    .section-tab.active { background: var(--dark); color: #fff; box-shadow: var(--shadow); }
-    .hint-box {
-      margin-top: 18px; padding: 14px; border-radius: 16px; border: 1px solid var(--line);
-      background: var(--panel-soft); color: var(--muted); font-size: 13px;
-    }
-    .hint-box strong { display: block; color: var(--text); margin-bottom: 5px; }
-    .workspace { padding: 24px; min-width: 0; }
     .topbar {
-      position: sticky; top: 0; z-index: 20; margin: -24px -24px 24px; padding: 18px 24px;
-      display: flex; align-items: center; justify-content: space-between; gap: 18px;
-      border-bottom: 1px solid var(--line); background: rgba(244, 241, 234, 0.86); backdrop-filter: blur(18px);
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 14px 0;
     }
-    .topbar h1 { margin: 0; font-size: clamp(24px, 3vw, 36px); line-height: 1; letter-spacing: -0.055em; }
-    .topbar p { margin: 6px 0 0; color: var(--muted); font-size: 13px; font-weight: 700; }
-    .actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .mark { width: 38px; height: 38px; border-radius: 13px; background: var(--dark); color: #fff; display: grid; place-items: center; font-weight: 950; letter-spacing: -.07em; }
+    h1 { margin: 0; font-size: 24px; letter-spacing: -.055em; }
+    .sub { margin-top: 3px; color: var(--muted); font-size: 13px; font-weight: 750; }
+    .top-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px;
-      padding: 10px 13px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--text);
-      font-weight: 900; font-size: 13px; text-decoration: none;
+      border: 0;
+      border-radius: 999px;
+      background: var(--dark);
+      color: #fff;
+      padding: 11px 16px;
+      font-weight: 900;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
     }
-    .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
-    .btn-primary { border-color: var(--dark); background: var(--dark); color: #fff; }
-    .btn-accent { border-color: rgba(215, 163, 84, .5); background: rgba(215, 163, 84, .18); color: var(--accent-dark); }
-    .btn-danger { border-color: rgba(180, 35, 24, .2); background: rgba(180, 35, 24, .08); color: var(--danger); }
-    .btn-small { min-height: 34px; padding: 8px 10px; font-size: 12px; }
-    .editor-grid { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 18px; align-items: start; }
-    .panel {
-      border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.76);
-      box-shadow: var(--shadow); overflow: hidden;
+    .btn.secondary { background: #fff; color: var(--dark); border: 1px solid var(--line); }
+    .btn.danger { background: var(--danger); }
+    .btn.small { padding: 8px 11px; font-size: 13px; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    main { padding: 24px 0 60px; }
+    .connection {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      background: rgba(255,250,244,.76);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
     }
-    .panel-head { padding: 18px 20px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.68); }
-    .panel-head h2 { margin: 0; font-size: 22px; letter-spacing: -0.045em; }
-    .panel-head p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
-    .panel-body { padding: 20px; }
-    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-    .field { display: grid; gap: 7px; margin-bottom: 15px; }
-    .field.full { grid-column: 1 / -1; }
-    .field span:first-child { font-size: 13px; color: var(--text); font-weight: 900; }
-    .hint { color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .field label { display: block; color: var(--muted); font-size: 12px; font-weight: 900; margin: 0 0 6px; text-transform: uppercase; letter-spacing: .06em; }
     input, textarea, select {
-      width: 100%; border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--text);
-      padding: 12px 13px; outline: none;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      color: var(--text);
+      padding: 11px 12px;
+      outline: none;
     }
-    textarea { min-height: 92px; resize: vertical; }
-    input:focus, textarea:focus, select:focus { border-color: rgba(215,163,84,.85); box-shadow: 0 0 0 4px rgba(215,163,84,.16); }
-    .array-block { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
-    .array-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-    .array-title h3 { margin: 0; font-size: 18px; letter-spacing: -0.035em; }
-    .array-list { display: grid; gap: 14px; }
-    .array-card { border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.72); overflow: hidden; }
-    .array-card-head {
-      display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px;
-      border-bottom: 1px solid var(--line); background: rgba(17,17,17,.025);
+    textarea { min-height: 84px; resize: vertical; line-height: 1.45; }
+    input:focus, textarea:focus, select:focus { border-color: rgba(0,0,0,.45); box-shadow: 0 0 0 4px rgba(0,0,0,.06); }
+    .connection-actions { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
+    .notice {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.72);
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 18px;
+      font-size: 14px;
     }
-    .array-card-head strong { font-size: 13px; }
-    .array-controls { display: flex; flex-wrap: wrap; gap: 7px; }
-    .array-card-body { padding: 14px; }
-    .quality-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-    .quality-list li { padding: 10px 12px; border-radius: 13px; background: rgba(17,17,17,.04); color: var(--muted); font-size: 13px; }
-    .quality-list li.ok { color: var(--success); background: rgba(33,122,71,.08); }
-    .quality-list li.warn { color: var(--danger); background: rgba(180,35,24,.08); }
-    .json-box {
-      margin-top: 18px; max-height: 340px; overflow: auto; padding: 14px; border-radius: 16px; border: 1px solid var(--line);
-      background: #141414; color: #f2eadc; font-family: var(--mono); font-size: 12px; white-space: pre-wrap;
+    .notice strong { color: var(--text); }
+    .status { margin-top: 10px; font-size: 14px; font-weight: 800; color: var(--muted); min-height: 22px; }
+    .status.ok { color: var(--ok); }
+    .status.warn { color: var(--warn); }
+    .status.err { color: var(--danger); }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+    .tab {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.78);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-weight: 950;
+      cursor: pointer;
     }
-    .status {
-      position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%) translateY(20px);
-      opacity: 0; pointer-events: none; z-index: 200; background: #111; color: #fff; border-radius: 999px;
-      padding: 11px 15px; font-size: 13px; font-weight: 900; box-shadow: 0 16px 42px rgba(17,17,17,.22); transition: .18s ease;
+    .tab.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .card {
+      background: rgba(255,250,244,.88);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 16px;
     }
-    .status.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .mobile-tabbar { display: none; margin-bottom: 14px; }
-
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 300; display: grid; place-items: center;
-      padding: 18px; background: rgba(17,17,17,.48); backdrop-filter: blur(8px);
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.48);
     }
-    .modal-overlay[hidden] { display: none !important; }
-    .modal {
-      width: min(760px, 100%); max-height: min(760px, 92vh); overflow: auto;
-      border-radius: 22px; border: 1px solid var(--line); background: #fff; box-shadow: 0 30px 90px rgba(0,0,0,.26);
+    .card-head h2 { margin: 0; font-size: 22px; letter-spacing: -.045em; }
+    .card-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+    .card-body { padding: 16px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .form-grid .wide { grid-column: 1 / -1; }
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 11px 12px;
+      background: #fff;
+      font-weight: 900;
+      color: var(--text);
     }
-    .modal-head {
-      display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
-      padding: 20px; border-bottom: 1px solid var(--line); background: var(--panel-soft);
+    .toggle input { width: 18px; height: 18px; }
+    .list { display: grid; gap: 12px; }
+    .item {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
     }
-    .modal-head h2 { margin: 0; font-size: 24px; letter-spacing: -0.045em; }
-    .modal-head p { margin: 6px 0 0; color: var(--muted); font-size: 13px; font-weight: 750; }
-    .modal-body { padding: 20px; }
-    .security-note {
-      padding: 13px 14px; margin-bottom: 16px; border-radius: 16px;
-      border: 1px solid rgba(180,35,24,.18); background: rgba(180,35,24,.07); color: var(--danger); font-size: 13px;
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #fcfaf6;
+      border-bottom: 1px solid var(--line);
     }
-    .security-note strong { display: block; margin-bottom: 4px; color: var(--danger); }
-    .modal-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; margin-top: 8px; }
-
-    .file-input { display: none; }
-    .image-field { gap: 10px; }
-    .image-preview {
-      width: 100%; min-height: 148px; border: 1px dashed rgba(21,21,21,.18); border-radius: 16px;
-      overflow: hidden; display: grid; place-items: center; background: rgba(255,250,242,.72); color: var(--muted);
-      font-size: 13px; font-weight: 800;
+    .item-title { font-weight: 950; letter-spacing: -.025em; }
+    .row-grid {
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 80px 90px 1fr 1fr;
+      gap: 10px;
+      align-items: start;
     }
-    .image-preview img { width: 100%; max-height: 240px; object-fit: cover; display: block; }
-    .image-tools { display: flex; flex-wrap: wrap; gap: 8px; }
-    .upload-label input { display: none; }
-    @media (max-width: 1100px) {
-      .app { grid-template-columns: 1fr; }
-      .sidebar { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
-      .section-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .editor-grid { grid-template-columns: 1fr; }
-      .topbar { position: relative; margin-top: 0; }
+    .row-grid.product { grid-template-columns: 80px 90px 1fr 1fr 1fr; }
+    .row-grid.promo { grid-template-columns: 80px 90px 1fr 1fr; }
+    .row-grid .wide { grid-column: 1 / -1; }
+    .image-helper {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 10px;
+      align-items: end;
     }
-    @media (max-width: 720px) {
-      .workspace { padding: 14px; }
-      .topbar { margin: -14px -14px 14px; padding: 14px; align-items: stretch; flex-direction: column; }
-      .actions { justify-content: flex-start; }
-      .section-tabs { grid-template-columns: 1fr; }
-      .form-grid { grid-template-columns: 1fr; }
+    .thumb {
+      height: 72px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #2d2d2d, #111);
+      color: rgba(255,255,255,.7);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+      text-align: center;
+      padding: 8px;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hint { color: var(--muted); font-size: 12px; line-height: 1.45; margin-top: 6px; }
+    .footer-save {
+      position: sticky;
+      bottom: 0;
+      z-index: 18;
+      background: rgba(244,239,231,.88);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--line);
+      padding: 12px 0;
+    }
+    .footer-save-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.8); border: 1px solid var(--line); border-radius: 999px; padding: 9px 12px; color: var(--muted); font-size: 13px; font-weight: 850; }
+    @media (max-width: 920px) {
+      .connection, .form-grid, .row-grid, .row-grid.product, .row-grid.promo, .image-helper { grid-template-columns: 1fr; }
+      .connection-actions { align-items: stretch; }
       .btn { width: 100%; }
-      .array-card-head { align-items: flex-start; flex-direction: column; }
-      .array-controls { width: 100%; }
-      .array-controls .btn { width: auto; }
+      .top-actions .btn, .item-top .btn, .card-head .btn { width: auto; }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="logo">
-        <div class="logo-mark">OS</div>
-        <div><strong>OTSKY Editor</strong><span>No-code content tool</span></div>
-      </div>
-      <div class="nav-section-label">Bagian website</div>
-      <div id="sectionTabs" class="section-tabs"></div>
-      <div class="hint-box">
-        <strong>Cara kerja</strong>
-        Edit isi di sini, klik Preview, lalu simpan ke <code>Google Sheet</code>. Website GitHub Pages otomatis membaca data dari Apps Script endpoint.
-      </div>
-    </aside>
-
-    <main class="workspace">
-      <div class="topbar">
+  <header>
+    <div class="wrap topbar">
+      <div class="brand">
+        <div class="mark">OS</div>
         <div>
-          <h1 id="sectionTitle">Content Editor</h1>
-          <p id="sectionSubtitle">Ubah isi website tanpa edit HTML.</p>
-        </div>
-        <div class="actions">
-          <button class="btn btn-accent" id="saveDraftBtn" type="button">Simpan Draft</button>
-          <button class="btn" id="loadGsheetBtn" type="button">Muat GSheet</button>
-          <button class="btn" id="previewBtn" type="button">Preview</button>
-          <button class="btn" id="exportBtn" type="button">Export JSON</button>
-          <button class="btn" id="importBtn" type="button">Import JSON</button>
-          <button class="btn btn-primary" id="gsheetBtn" type="button">Simpan ke GSheet</button>
+          <h1>Admin Minimal OTSKY</h1>
+          <div class="sub">Hanya untuk pengumuman, kategori, produk, dan promo</div>
         </div>
       </div>
+      <div class="top-actions">
+        <a class="btn secondary" href="index.html" target="_blank" rel="noopener">Lihat Website</a>
+        <button class="btn" type="button" id="saveTop">Simpan ke GSheet</button>
+      </div>
+    </div>
+  </header>
 
-      <div class="editor-grid">
-        <section class="panel">
-          <div class="panel-head"><h2 id="editorHeading">Loading...</h2><p id="editorHelp">Memuat data konten.</p></div>
-          <div class="panel-body" id="editor"></div>
-        </section>
-        <aside class="panel">
-          <div class="panel-head"><h2>Quality check</h2><p>Validasi cepat sebelum publish.</p></div>
-          <div class="panel-body">
-            <ul id="qualityList" class="quality-list"></ul>
-            <div style="display: grid; gap: 9px; margin-top: 18px;">
-              <button class="btn btn-danger" id="resetBtn" type="button">Reset ke Default</button>
-              <button class="btn" id="copyJsonBtn" type="button">Copy JSON</button>
+  <main>
+    <div class="wrap">
+      <section class="connection" aria-label="Koneksi Google Sheet">
+        <div class="field">
+          <label for="apiUrl">Apps Script Web App URL</label>
+          <input id="apiUrl" placeholder="https://script.google.com/macros/s/XXXXX/exec">
+        </div>
+        <div class="connection-actions">
+          <button class="btn secondary" id="loadBtn" type="button">Muat GSheet</button>
+          <button class="btn" id="saveBtn" type="button">Simpan</button>
+        </div>
+      </section>
+
+      <div class="notice">
+        <strong>Foto dari Google Drive:</strong> upload foto ke Drive, set <strong>Anyone with the link - Viewer</strong>, lalu paste share link/file ID di kolom gambar. Admin ini tidak memakai admin key; siapa pun yang tahu URL admin dan Apps Script bisa menyimpan perubahan.
+        <div id="status" class="status">Belum memuat data.</div>
+      </div>
+
+      <nav class="tabs" aria-label="Menu admin">
+        <button class="tab active" data-tab="announcement" type="button">Pengumuman</button>
+        <button class="tab" data-tab="categories" type="button">Kategori</button>
+        <button class="tab" data-tab="products" type="button">Produk</button>
+        <button class="tab" data-tab="promos" type="button">Promo</button>
+      </nav>
+
+      <section id="panel-announcement" class="panel active">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2>Popup Penting & Teks Berjalan</h2>
+              <p>Untuk info flash sale, libur operasional, stok terbatas, atau campaign utama.</p>
             </div>
-            <pre id="jsonPreview" class="json-box"></pre>
           </div>
-        </aside>
-      </div>
-    </main>
-  </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <label class="toggle"><input id="popupEnabled" type="checkbox"> Aktifkan popup penting</label>
+              <label class="toggle"><input id="tickerEnabled" type="checkbox"> Aktifkan teks berjalan</label>
+              <div class="field">
+                <label for="popupTitle">Judul popup</label>
+                <input id="popupTitle" placeholder="Contoh: Promo Spesial Minggu Ini">
+              </div>
+              <div class="field">
+                <label for="popupButtonText">Teks tombol popup</label>
+                <input id="popupButtonText" placeholder="Contoh: Lihat Promo">
+              </div>
+              <div class="field wide">
+                <label for="popupMessage">Isi popup</label>
+                <textarea id="popupMessage" placeholder="Tulis pengumuman singkat dan jelas."></textarea>
+              </div>
+              <div class="field wide">
+                <label for="popupButtonLink">Link tombol popup</label>
+                <input id="popupButtonLink" placeholder="#promo atau link marketplace">
+              </div>
+              <div class="field wide">
+                <label for="tickerText">Isi teks berjalan</label>
+                <textarea id="tickerText" placeholder="Contoh: Official OTSKY Store • Promo terbatas • Belanja aman lewat kanal resmi"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <input id="fileInput" class="file-input" type="file" accept="application/json,.json" />
-  <div id="status" class="status" role="status" aria-live="polite"></div>
+      <section id="panel-categories" class="panel">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2>Kategori</h2>
+              <p>Kelola kategori yang tampil di homepage.</p>
+            </div>
+            <button class="btn secondary" data-action="add" data-section="categories" type="button">+ Tambah kategori</button>
+          </div>
+          <div class="card-body"><div id="categoriesList" class="list"></div></div>
+        </div>
+      </section>
 
-  <div id="gsheetModal" class="modal-overlay" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="gsheetModalTitle">
-      <div class="modal-head">
-        <div>
-          <h2 id="gsheetModalTitle">Koneksi Google Sheet</h2>
-          <p>Admin akan membaca dan menyimpan isi website ke Google Sheet lewat Apps Script Web App.</p>
+      <section id="panel-products" class="panel">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2>Produk</h2>
+              <p>Kelola produk pilihan, harga, gambar, dan link belanja.</p>
+            </div>
+            <button class="btn secondary" data-action="add" data-section="products" type="button">+ Tambah produk</button>
+          </div>
+          <div class="card-body"><div id="productsList" class="list"></div></div>
         </div>
-        <button class="btn btn-small" id="gsheetCloseBtn" type="button">Tutup</button>
-      </div>
-      <div class="modal-body">
-        <div class="security-note">
-          <strong>Keamanan admin key</strong>
-          Admin key diketik saat publish atau upload foto dan tidak disimpan ke repo. Simpan key aslinya di Apps Script Properties dengan nama <code>OTSKY_ADMIN_KEY</code>. Foto upload akan masuk ke folder Drive dari property <code>OTSKY_IMAGE_FOLDER_ID</code>; kalau kosong, Apps Script akan membuat folder otomatis.
+      </section>
+
+      <section id="panel-promos" class="panel">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2>Promo</h2>
+              <p>Kelola campaign atau bundling yang tampil di section promo.</p>
+            </div>
+            <button class="btn secondary" data-action="add" data-section="promos" type="button">+ Tambah promo</button>
+          </div>
+          <div class="card-body"><div id="promosList" class="list"></div></div>
         </div>
-        <div class="form-grid">
-          <label class="field full"><span>Apps Script Web App URL</span><input id="gsApiUrl" placeholder="https://script.google.com/macros/s/AKfycbx.../exec" autocomplete="off" /><span class="hint">URL ini public dan boleh ada di config.js. Jangan isi admin key di config.js.</span></label>
-          <label class="field full"><span>Admin key</span><input id="gsAdminKey" type="password" placeholder="Masukkan admin key hanya saat ingin save" autocomplete="off" /><span class="hint">Admin key dipakai untuk menyimpan data ke Sheet. Tombol muat data tidak butuh key.</span></label>
-        </div>
-        <div class="modal-actions">
-          <button class="btn" id="gsheetSaveConfigBtn" type="button">Simpan URL</button>
-          <button class="btn" id="gsheetLoadRemoteBtn" type="button">Muat dari GSheet</button>
-          <button class="btn btn-primary" id="gsheetSaveRemoteBtn" type="button">Simpan perubahan</button>
-        </div>
-      </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="footer-save">
+    <div class="wrap footer-save-inner">
+      <div class="pill">Data disimpan ke Google Sheet lewat Apps Script</div>
+      <button class="btn" id="saveBottom" type="button">Simpan ke GSheet</button>
     </div>
   </div>
 
-  <script id="default-content" type="application/json">{
-  "meta": {
-    "siteName": "OTSKY Official Store",
-    "title": "OTSKY Official Store | Daily Wear Lokal",
-    "description": "OTSKY adalah brand fashion lokal untuk daily wear: kaos, polo, kemeja, celana, backpack, dan aksesori. Belanja original hanya melalui kanal resmi OTSKY.",
-    "keywords": "OTSKY, OTSKY official store, kaos pria lokal, polo shirt pria, kemeja pria casual, celana pria, backpack pria, brand fashion lokal",
-    "ogImage": "assets/otsky-og-image.jpg"
-  },
-  "brand": {
-    "name": "OTSKY",
-    "tagline": "Daily Wear Lokal",
-    "logoText": "OTSKY",
-    "established": "Sejak 2015",
-    "announcement": "Belanja original hanya melalui kanal resmi OTSKY.",
-    "whatsappUrl": "https://wa.me/6281234567890",
-    "instagramUrl": "https://www.instagram.com/otsky_store"
-  },
-  "navigation": [
-    {
-      "label": "Koleksi",
-      "url": "#koleksi"
-    },
-    {
-      "label": "Best Seller",
-      "url": "#produk"
-    },
-    {
-      "label": "Promo",
-      "url": "#promo"
-    },
-    {
-      "label": "Tentang",
-      "url": "#tentang"
-    },
-    {
-      "label": "Official Store",
-      "url": "#official-store"
-    }
-  ],
-  "hero": {
-    "eyebrow": "Brand lokal Lampung sejak 2015",
-    "title": "Daily Wear Lokal untuk Gaya Santai Setiap Hari",
-    "description": "Temukan kaos, polo shirt, kemeja, celana, backpack, dan aksesori original OTSKY melalui kanal resmi kami.",
-    "primaryButton": {
-      "label": "Belanja Sekarang",
-      "url": "#produk"
-    },
-    "secondaryButton": {
-      "label": "Lihat Official Store",
-      "url": "#official-store"
-    },
-    "image": "",
-    "imageAlt": "Model menggunakan outfit OTSKY",
-    "badges": [
-      "Kaos",
-      "Polo",
-      "Kemeja",
-      "Celana",
-      "Backpack"
-    ],
-    "stats": [
-      {
-        "number": "741K+",
-        "label": "Pengikut Shopee"
-      },
-      {
-        "number": "4.8",
-        "label": "Rating toko"
-      },
-      {
-        "number": "2015",
-        "label": "Mulai hadir"
-      }
-    ]
-  },
-  "trust": [
-    {
-      "title": "Brand lokal sejak 2015",
-      "description": "Berawal dari Lampung dan berkembang melalui kanal resmi online."
-    },
-    {
-      "title": "Official store multi-platform",
-      "description": "Tersedia di website, Shopee, Lazada, TikTok Shop, Tokopedia, Blibli, Instagram, dan WhatsApp."
-    },
-    {
-      "title": "Produk harian lengkap",
-      "description": "Pilihan kaos, polo, kemeja, celana, backpack, dan aksesori untuk daily outfit."
-    },
-    {
-      "title": "Harga accessible",
-      "description": "Koleksi casual wear dengan pilihan bundling dan promo official store."
-    }
-  ],
-  "categories": {
-    "eyebrow": "Shop by category",
-    "title": "Pilih kategori favorit",
-    "description": "Mulai dari outfit harian sampai aksesori pendukung, semua diarahkan ke kanal belanja resmi.",
-    "items": [
-      {
-        "icon": "TS",
-        "title": "T-Shirts",
-        "description": "Kaos cotton combed untuk daily wear.",
-        "url": "#produk",
-        "image": ""
-      },
-      {
-        "icon": "PS",
-        "title": "Polo Shirts",
-        "description": "Polo casual untuk tampilan rapi santai.",
-        "url": "#produk",
-        "image": ""
-      },
-      {
-        "icon": "KM",
-        "title": "Kemeja",
-        "description": "Kemeja basic, oversize, dan casual look.",
-        "url": "#produk",
-        "image": ""
-      },
-      {
-        "icon": "CL",
-        "title": "Celana",
-        "description": "Chino, denim, corduroy, dan shorts.",
-        "url": "#produk",
-        "image": ""
-      },
-      {
-        "icon": "BP",
-        "title": "Backpacks",
-        "description": "Tas untuk sekolah, kuliah, kerja, dan travel ringan.",
-        "url": "#produk",
-        "image": ""
-      },
-      {
-        "icon": "AC",
-        "title": "Accessories",
-        "description": "Topi, paper bag, dan pelengkap outfit.",
-        "url": "#produk",
-        "image": ""
-      }
-    ]
-  },
-  "products": {
-    "eyebrow": "Best seller",
-    "title": "Produk yang paling sering dicari",
-    "description": "Gunakan bagian ini untuk menampilkan produk unggulan, harga promo, dan CTA ke marketplace resmi.",
-    "cta": {
-      "label": "Lihat semua produk",
-      "url": "#official-store"
-    },
-    "items": [
-      {
-        "badge": "Best Seller",
-        "name": "Kaos Pria Font Signature",
-        "category": "T-Shirt",
-        "price": "Rp59.900",
-        "description": "Cotton combed 24s, cocok untuk daily outfit.",
-        "url": "#official-store",
-        "image": ""
-      },
-      {
-        "badge": "Promo",
-        "name": "Kaos Pria Two Strip",
-        "category": "T-Shirt",
-        "price": "Rp64.900",
-        "description": "Desain basic sporty dengan pilihan warna mudah dipadukan.",
-        "url": "#official-store",
-        "image": ""
-      },
-      {
-        "badge": "New Look",
-        "name": "Kemeja Pria Basic Toyobo",
-        "category": "Kemeja",
-        "price": "Rp119.900",
-        "description": "Kemeja casual untuk kampus, kerja santai, atau weekend.",
-        "url": "#official-store",
-        "image": ""
-      },
-      {
-        "badge": "Favorite",
-        "name": "Backpack Sekolah/Kuliah",
-        "category": "Backpack",
-        "price": "Rp149.900",
-        "description": "Tas harian dengan ruang cukup untuk aktivitas produktif.",
-        "url": "#official-store",
-        "image": ""
-      }
-    ]
-  },
-  "promos": {
-    "eyebrow": "Official deals",
-    "title": "Promo bundling dan diskon official",
-    "description": "Bagian promo bisa diubah kapan pun dari admin, tanpa menyentuh HTML.",
-    "items": [
-      {
-        "title": "Buy 1 Get 2",
-        "description": "Paket hemat untuk koleksi kaos pilihan.",
-        "label": "Limited Deal",
-        "url": "#official-store"
-      },
-      {
-        "title": "Buy 1 Get 3",
-        "description": "Bundling produk tertentu selama stok tersedia.",
-        "label": "Bundle",
-        "url": "#official-store"
-      },
-      {
-        "title": "Flash Sale Official Store",
-        "description": "Cek kanal resmi untuk harga terbaru dan voucher aktif.",
-        "label": "Hot",
-        "url": "#official-store"
-      }
-    ]
-  },
-  "story": {
-    "eyebrow": "Tentang OTSKY",
-    "title": "Brand fashion lokal yang tumbuh dari daily wear.",
-    "paragraphs": [
-      "OTSKY adalah brand fashion lokal asal Lampung yang hadir sejak 2015.",
-      "Dengan semangat Offer The Best Service & Kindness to You, OTSKY menghadirkan pilihan outfit harian yang nyaman, mudah dipadukan, dan accessible untuk banyak kalangan."
-    ],
-    "highlights": [
-      "Produk original melalui kanal resmi",
-      "Pilihan kategori casual wear yang luas",
-      "Fokus pada kualitas, desain relevan, dan layanan ramah"
-    ],
-    "image": "",
-    "imageAlt": "Brand story OTSKY"
-  },
-  "lookbook": {
-    "eyebrow": "Style guide",
-    "title": "Inspirasi outfit harian",
-    "description": "Gunakan section ini untuk campaign, lookbook, atau foto UGC dari Instagram/TikTok.",
-    "items": [
-      {
-        "title": "Campus Casual",
-        "description": "Kaos basic, chino, dan backpack untuk aktivitas kampus.",
-        "image": ""
-      },
-      {
-        "title": "Weekend Fit",
-        "description": "Oversize tee dan shorts untuk gaya santai akhir pekan.",
-        "image": ""
-      },
-      {
-        "title": "Smart Casual",
-        "description": "Polo atau kemeja basic untuk look rapi tanpa ribet.",
-        "image": ""
-      }
-    ]
-  },
-  "channels": {
-    "eyebrow": "Official store",
-    "title": "Belanja OTSKY hanya melalui kanal resmi",
-    "description": "Pilih kanal favoritmu. Pastikan membeli dari official store untuk menghindari seller palsu.",
-    "items": [
-      {
-        "name": "Website",
-        "description": "Katalog dan brand hub resmi",
-        "url": "https://otskyofficial.com/"
-      },
-      {
-        "name": "Shopee",
-        "description": "Official store marketplace",
-        "url": "https://shopee.co.id/otsky"
-      },
-      {
-        "name": "Lazada",
-        "description": "Belanja via Lazada",
-        "url": "#"
-      },
-      {
-        "name": "TikTok Shop",
-        "description": "Live shopping dan promo",
-        "url": "#"
-      },
-      {
-        "name": "Tokopedia",
-        "description": "Checkout lewat Tokopedia",
-        "url": "#"
-      },
-      {
-        "name": "Blibli",
-        "description": "Belanja via Blibli",
-        "url": "#"
-      },
-      {
-        "name": "Instagram",
-        "description": "Update campaign dan katalog",
-        "url": "https://www.instagram.com/otsky_store"
-      },
-      {
-        "name": "WhatsApp CS",
-        "description": "Bantuan ukuran, stok, dan order",
-        "url": "https://wa.me/6281234567890"
-      }
-    ]
-  },
-  "faq": {
-    "eyebrow": "FAQ",
-    "title": "Pertanyaan yang sering ditanyakan",
-    "description": "Edit jawaban ini sesuai kebijakan terbaru: ukuran, retur, pengiriman, dan kanal pembelian.",
-    "items": [
-      {
-        "question": "Apakah produk OTSKY original?",
-        "answer": "Ya. Pastikan pembelian dilakukan melalui kanal resmi OTSKY yang tercantum di website ini."
-      },
-      {
-        "question": "Bagaimana cara memilih ukuran?",
-        "answer": "Cek size chart pada halaman produk atau hubungi WhatsApp CS untuk rekomendasi ukuran berdasarkan tinggi dan berat badan."
-      },
-      {
-        "question": "Apakah bisa tukar ukuran?",
-        "answer": "Kebijakan tukar ukuran mengikuti syarat dan ketentuan kanal pembelian. Simpan bukti transaksi dan hubungi CS sesegera mungkin."
-      },
-      {
-        "question": "Di mana bisa melihat promo terbaru?",
-        "answer": "Promo terbaru tersedia di official website, Shopee, TikTok Shop, dan kanal resmi lain yang tercantum di halaman ini."
-      }
-    ]
-  },
-  "footer": {
-    "description": "Daily wear lokal untuk gaya santai setiap hari. Belanja original hanya melalui kanal resmi OTSKY.",
-    "copyright": "© 2026 OTSKY. All rights reserved.",
-    "links": [
-      {
-        "label": "Size Guide",
-        "url": "#faq"
-      },
-      {
-        "label": "Official Store",
-        "url": "#official-store"
-      },
-      {
-        "label": "WhatsApp CS",
-        "url": "https://wa.me/6281234567890"
-      },
-      {
-        "label": "Instagram",
-        "url": "https://www.instagram.com/otsky_store"
-      }
-    ]
-  }
-}</script>
-  <script src="config.js"></script>
   <script>
-    (() => {
-      const DEFAULT_CONTENT = JSON.parse(document.getElementById('default-content').textContent);
-      const STORAGE_DRAFT = 'otskyContentDraft';
-      const STORAGE_PREVIEW = 'otskyContentPreview';
-      const STORAGE_PASSWORD = 'otskyCmsPassword';
-      const STORAGE_GSHEET = 'otskyGsheetConfig';
-      let state = clone(DEFAULT_CONTENT);
-      let currentSection = 'global';
-      let statusTimer = null;
+    const CONFIG = window.OTSKY_CMS_CONFIG || {};
+    const STORAGE_KEYS = {
+      apiUrl: "otsky_lite_api_url"
+    };
+    const DEFAULT_CONTENT = {
+      announcement: {
+        popupEnabled: false,
+        popupTitle: "",
+        popupMessage: "",
+        popupButtonText: "Lihat Detail",
+        popupButtonLink: "#promo",
+        tickerEnabled: false,
+        tickerText: ""
+      },
+      categories: [],
+      products: [],
+      promos: []
+    };
+    let state = structuredClone(DEFAULT_CONTENT);
 
-      const sections = [
-        { id: 'global', label: 'SEO & Brand', title: 'SEO, brand, dan menu', help: 'Ubah metadata Google, nama brand, announcement, link WhatsApp/Instagram, dan navigasi.' },
-        { id: 'hero', label: 'Hero', title: 'Hero homepage', help: 'Bagian paling atas website: headline, CTA, gambar utama, badge, dan statistik.' },
-        { id: 'trust', label: 'Trust & Kategori', title: 'Trust bar dan kategori', help: 'Social proof/USP dan kategori utama yang muncul di homepage.' },
-        { id: 'products', label: 'Produk', title: 'Best seller / produk unggulan', help: 'Tambah, hapus, dan ubah produk unggulan, harga, badge, link beli, dan gambar.' },
-        { id: 'promo', label: 'Promo', title: 'Promo dan bundling', help: 'Ubah campaign promo, bundling, dan CTA ke kanal belanja.' },
-        { id: 'story', label: 'Tentang', title: 'Brand story', help: 'Isi bagian tentang OTSKY: paragraf, highlight, dan gambar.' },
-        { id: 'lookbook', label: 'Lookbook', title: 'Lookbook / style guide', help: 'Kelola inspirasi outfit, campaign, atau UGC.' },
-        { id: 'channels', label: 'Official Store', title: 'Kanal resmi', help: 'Ubah daftar marketplace, Instagram, WhatsApp, dan link resmi.' },
-        { id: 'faq', label: 'FAQ', title: 'FAQ', help: 'Ubah pertanyaan dan jawaban kebijakan pembelian, ukuran, retur, dan promo.' },
-        { id: 'footer', label: 'Footer', title: 'Footer', help: 'Ubah deskripsi footer, copyright, dan link tambahan.' }
-      ];
+    const schemas = {
+      categories: [
+        ["active", "Aktif", "checkbox"],
+        ["order", "Urutan", "number"],
+        ["name", "Nama kategori", "text"],
+        ["description", "Deskripsi", "textarea", "wide"],
+        ["image", "Gambar / Google Drive link", "image", "wide"],
+        ["link", "Link kategori", "text", "wide"]
+      ],
+      products: [
+        ["active", "Aktif", "checkbox"],
+        ["order", "Urutan", "number"],
+        ["name", "Nama produk", "text"],
+        ["category", "Kategori", "text"],
+        ["price", "Harga", "text"],
+        ["badge", "Badge", "text"],
+        ["description", "Deskripsi", "textarea", "wide"],
+        ["image", "Gambar / Google Drive link", "image", "wide"],
+        ["link", "Link belanja", "text", "wide"]
+      ],
+      promos: [
+        ["active", "Aktif", "checkbox"],
+        ["order", "Urutan", "number"],
+        ["title", "Judul promo", "text"],
+        ["badge", "Badge", "text"],
+        ["description", "Deskripsi", "textarea", "wide"],
+        ["image", "Gambar / Google Drive link", "image", "wide"],
+        ["buttonText", "Teks tombol", "text"],
+        ["buttonLink", "Link tombol", "text", "wide"]
+      ]
+    };
 
-      const templates = {
-        'navigation': { label: 'Menu baru', url: '#' },
-        'hero.badges': 'Badge baru',
-        'hero.stats': { number: '0', label: 'Label statistik' },
-        'trust': { title: 'USP baru', description: 'Deskripsi singkat.' },
-        'categories.items': { icon: 'CT', title: 'Kategori baru', description: 'Deskripsi kategori.', url: '#produk', image: '' },
-        'products.items': { badge: 'New', name: 'Nama produk', category: 'Kategori', price: 'Rp0', description: 'Deskripsi produk.', url: '#official-store', image: '' },
-        'promos.items': { title: 'Promo baru', description: 'Deskripsi promo.', label: 'Deal', url: '#official-store' },
-        'story.paragraphs': 'Paragraf baru tentang brand.',
-        'story.highlights': 'Highlight baru.',
-        'lookbook.items': { title: 'Look baru', description: 'Deskripsi look.', image: '' },
-        'channels.items': { name: 'Channel baru', description: 'Deskripsi channel.', url: '#' },
-        'faq.items': { question: 'Pertanyaan baru?', answer: 'Jawaban FAQ.' },
-        'footer.links': { label: 'Link baru', url: '#' }
+    function $(id) { return document.getElementById(id); }
+
+    function setStatus(message, type = "") {
+      const el = $("status");
+      el.textContent = message;
+      el.className = "status" + (type ? " " + type : "");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#039;","\"":"&quot;"}[char]));
+    }
+
+    function escapeAttr(value) { return escapeHtml(value); }
+
+    function toBool(value) {
+      if (typeof value === "boolean") return value;
+      return ["true", "1", "yes", "ya", "aktif", "active"].includes(String(value).trim().toLowerCase());
+    }
+
+    function normalizeArray(items) {
+      return (Array.isArray(items) ? items : []).map((item, index) => ({...item, active: toBool(item.active), order: Number(item.order || index + 1)}));
+    }
+
+    function normalizeContent(content) {
+      const next = {...DEFAULT_CONTENT, ...(content || {})};
+      next.announcement = {...DEFAULT_CONTENT.announcement, ...(next.announcement || {})};
+      next.announcement.popupEnabled = toBool(next.announcement.popupEnabled);
+      next.announcement.tickerEnabled = toBool(next.announcement.tickerEnabled);
+      next.categories = normalizeArray(next.categories);
+      next.products = normalizeArray(next.products);
+      next.promos = normalizeArray(next.promos);
+      return next;
+    }
+
+    function extractDriveId(value) {
+      const text = String(value || "").trim();
+      if (!text) return "";
+      if (!/^https?:\/\//i.test(text) && /^[a-zA-Z0-9_-]{20,}$/.test(text)) return text;
+      const patterns = [/\/file\/d\/([a-zA-Z0-9_-]+)/, /[?&]id=([a-zA-Z0-9_-]+)/, /\/d\/([a-zA-Z0-9_-]+)/, /thumbnail\?id=([a-zA-Z0-9_-]+)/];
+      for (const pattern of patterns) {
+        const match = text.match(pattern);
+        if (match) return match[1];
+      }
+      return "";
+    }
+
+    function imageUrl(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      const id = extractDriveId(raw);
+      if (id) return `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w400`;
+      return raw;
+    }
+
+    function imageThumbHtml(value) {
+      const src = imageUrl(value);
+      if (!src) return `<div class="thumb">Preview</div>`;
+      return `<div class="thumb"><img src="${escapeAttr(src)}" alt="Preview" onerror="this.parentElement.textContent='Link gambar belum bisa tampil'"></div>`;
+    }
+
+    function loadSavedConnection() {
+      $("apiUrl").value = localStorage.getItem(STORAGE_KEYS.apiUrl) || CONFIG.apiUrl || "";
+    }
+
+    function saveConnection() {
+      localStorage.setItem(STORAGE_KEYS.apiUrl, $("apiUrl").value.trim());
+    }
+
+    function getApiUrl() { return $("apiUrl").value.trim(); }
+
+    function loadJsonp(url, timeoutMs) {
+      return new Promise((resolve, reject) => {
+        const callbackName = "otskyAdminCallback_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+        const separator = url.includes("?") ? "&" : "?";
+        const script = document.createElement("script");
+        const timer = window.setTimeout(() => cleanup(() => reject(new Error("Timeout load GSheet"))), timeoutMs || 12000);
+        function cleanup(done) {
+          window.clearTimeout(timer);
+          delete window[callbackName];
+          script.remove();
+          done();
+        }
+        window[callbackName] = payload => cleanup(() => resolve(payload && payload.content ? payload.content : payload));
+        script.onerror = () => cleanup(() => reject(new Error("Gagal membaca GSheet")));
+        script.src = `${url}${separator}action=read&callback=${encodeURIComponent(callbackName)}&v=${Date.now()}`;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function loadFallback() {
+      const response = await fetch(`${CONFIG.fallbackContentUrl || "content.json"}?v=${Date.now()}`);
+      if (!response.ok) throw new Error("content.json gagal dibaca");
+      return response.json();
+    }
+
+    async function loadContent() {
+      saveConnection();
+      const url = getApiUrl();
+      setStatus(url ? "Memuat data dari Google Sheet..." : "API URL kosong. Memuat data fallback content.json...", "warn");
+      try {
+        const content = url ? await loadJsonp(url, CONFIG.loadTimeoutMs) : await loadFallback();
+        state = normalizeContent(content);
+        renderAll();
+        setStatus(url ? "Data berhasil dimuat dari Google Sheet." : "Data fallback berhasil dimuat. Isi Apps Script URL untuk konek ke GSheet.", url ? "ok" : "warn");
+      } catch (error) {
+        console.error(error);
+        try {
+          state = normalizeContent(await loadFallback());
+          renderAll();
+          setStatus("GSheet gagal dimuat, jadi admin memakai data fallback content.json.", "warn");
+        } catch (fallbackError) {
+          console.error(fallbackError);
+          setStatus("Gagal memuat data. Cek Apps Script URL atau content.json.", "err");
+        }
+      }
+    }
+
+    function renderAnnouncement() {
+      const a = state.announcement || DEFAULT_CONTENT.announcement;
+      $("popupEnabled").checked = toBool(a.popupEnabled);
+      $("popupTitle").value = a.popupTitle || "";
+      $("popupMessage").value = a.popupMessage || "";
+      $("popupButtonText").value = a.popupButtonText || "";
+      $("popupButtonLink").value = a.popupButtonLink || "";
+      $("tickerEnabled").checked = toBool(a.tickerEnabled);
+      $("tickerText").value = a.tickerText || "";
+    }
+
+    function collectAnnouncement() {
+      return {
+        popupEnabled: $("popupEnabled").checked,
+        popupTitle: $("popupTitle").value.trim(),
+        popupMessage: $("popupMessage").value.trim(),
+        popupButtonText: $("popupButtonText").value.trim(),
+        popupButtonLink: $("popupButtonLink").value.trim(),
+        tickerEnabled: $("tickerEnabled").checked,
+        tickerText: $("tickerText").value.trim()
       };
+    }
 
-      const $ = (selector, scope = document) => scope.querySelector(selector);
-      const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
-      const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
-      }[char]));
-      const attr = esc;
-      function clone(value) { return JSON.parse(JSON.stringify(value)); }
-      function parts(path) { return String(path).split('.').filter(Boolean); }
-      function getPath(path) {
-        return parts(path).reduce((obj, key) => (obj == null ? undefined : obj[key]), state);
-      }
-      function setPath(path, value) {
-        const keys = parts(path);
-        let target = state;
-        for (let i = 0; i < keys.length - 1; i++) {
-          if (target[keys[i]] == null) target[keys[i]] = /^\d+$/.test(keys[i + 1]) ? [] : {};
-          target = target[keys[i]];
-        }
-        target[keys[keys.length - 1]] = value;
-      }
-      function ensureArray(path) {
-        let arr = getPath(path);
-        if (!Array.isArray(arr)) { setPath(path, []); arr = getPath(path); }
-        return arr;
-      }
+    function itemTitle(section, item, index) {
+      if (section === "categories") return item.name || `Kategori ${index + 1}`;
+      if (section === "products") return item.name || `Produk ${index + 1}`;
+      return item.title || `Promo ${index + 1}`;
+    }
 
-      function showStatus(message, type = 'normal') {
-        const el = $('#status');
-        el.textContent = message;
-        el.style.background = type === 'error' ? '#b42318' : type === 'success' ? '#217a47' : '#111';
-        el.classList.add('show');
-        clearTimeout(statusTimer);
-        statusTimer = setTimeout(() => el.classList.remove('show'), 2600);
+    function fieldHtml(section, index, field, item) {
+      const [key, label, type, size] = field;
+      const id = `${section}-${index}-${key}`;
+      const value = item[key] ?? "";
+      const wide = size === "wide" ? " wide" : "";
+      if (type === "checkbox") {
+        return `<label class="toggle"><input data-field="${key}" type="checkbox" ${toBool(value) ? "checked" : ""}> ${label}</label>`;
       }
-
-      function markDirty(message) {
-        if (message) showStatus(message);
-        updateJsonPreview();
-        renderQuality();
+      if (type === "textarea") {
+        return `<div class="field${wide}"><label for="${id}">${label}</label><textarea id="${id}" data-field="${key}">${escapeHtml(value)}</textarea></div>`;
       }
-
-      function input(label, path, options = {}) {
-        const type = options.type || 'text';
-        const rows = options.rows || 3;
-        const hint = options.hint ? `<span class="hint">${esc(options.hint)}</span>` : '';
-        const full = options.full ? ' full' : '';
-        const value = getPath(path) ?? '';
-        if (type === 'textarea') {
-          return `<label class="field${full}"><span>${esc(label)}</span><textarea data-bind="${attr(path)}" rows="${rows}">${esc(value)}</textarea>${hint}</label>`;
-        }
-        return `<label class="field${full}"><span>${esc(label)}</span><input data-bind="${attr(path)}" type="${attr(type)}" value="${attr(value)}" placeholder="${attr(options.placeholder || '')}">${hint}</label>`;
-      }
-
-      function extractDriveFileId(value) {
-        const raw = String(value || '').trim();
-        if (!raw) return '';
-        if (/^[a-zA-Z0-9_-]{20,}$/.test(raw) && !/^https?:/i.test(raw)) return raw;
-        const patterns = [
-          /\/file\/d\/([a-zA-Z0-9_-]+)/,
-          /[?&]id=([a-zA-Z0-9_-]+)/,
-          /\/uc\?[^#]*id=([a-zA-Z0-9_-]+)/,
-          /\/d\/([a-zA-Z0-9_-]+)/
-        ];
-        for (const pattern of patterns) {
-          const match = raw.match(pattern);
-          if (match) return match[1];
-        }
-        return '';
-      }
-
-      function driveImageUrl(fileId, size = 'w1200') {
-        return `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=${encodeURIComponent(size)}`;
-      }
-
-      function normalizeImageUrl(value, size = 'w1200') {
-        const raw = String(value || '').trim();
-        if (!raw) return '';
-        const driveId = extractDriveFileId(raw);
-        return driveId ? driveImageUrl(driveId, size) : raw;
-      }
-
-      function imagePreviewMarkup(value, label = 'Preview foto') {
-        const src = normalizeImageUrl(value);
-        return src ? `<img src="${attr(src)}" alt="${attr(label)}" loading="lazy">` : `<span>${esc(label)}</span>`;
-      }
-
-      function imageInput(label, path, options = {}) {
-        const value = getPath(path) ?? '';
-        const full = options.full === false ? '' : ' full';
-        const hintText = options.hint || 'Bisa paste Google Drive share link, file ID Drive, URL gambar, atau upload langsung ke Google Drive.';
-        return `
-          <div class="field image-field${full}">
-            <span>${esc(label)}</span>
-            <input data-bind="${attr(path)}" data-image-input="1" type="text" value="${attr(value)}" placeholder="Paste link Google Drive / file ID / URL gambar">
-            <span class="hint">${esc(hintText)}</span>
-            <div class="image-preview" data-image-preview="${attr(path)}">${imagePreviewMarkup(value, label)}</div>
-            <div class="image-tools">
-              <button class="btn btn-small" type="button" data-image-normalize="${attr(path)}">Pakai URL gambar</button>
-              <label class="btn btn-small btn-accent upload-label">Upload ke GDrive<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-image-upload="${attr(path)}"></label>
+      if (type === "image") {
+        return `<div class="field${wide}">
+          <label for="${id}">${label}</label>
+          <div class="image-helper">
+            <div>
+              <input id="${id}" data-field="${key}" value="${escapeAttr(value)}" placeholder="Paste Google Drive share link, file ID, atau URL gambar">
+              <div class="hint">Contoh: https://drive.google.com/file/d/FILE_ID/view atau langsung FILE_ID.</div>
             </div>
-          </div>`;
-      }
-
-      function sectionHeader(heading, description) {
-        return `<div style="margin-bottom: 16px;"><strong style="font-size: 15px;">${esc(heading)}</strong><p style="margin: 4px 0 0; color: var(--muted); font-size: 13px;">${esc(description)}</p></div>`;
-      }
-
-      function arrayEditor(path, title, renderFields, options = {}) {
-        const arr = ensureArray(path);
-        const items = arr.map((item, index) => `
-          <div class="array-card">
-            <div class="array-card-head">
-              <strong>${esc(options.itemLabel || title)} #${index + 1}</strong>
-              <div class="array-controls">
-                <button class="btn btn-small" type="button" data-action="up" data-path="${attr(path)}" data-index="${index}">Naik</button>
-                <button class="btn btn-small" type="button" data-action="down" data-path="${attr(path)}" data-index="${index}">Turun</button>
-                <button class="btn btn-small" type="button" data-action="duplicate" data-path="${attr(path)}" data-index="${index}">Duplikat</button>
-                <button class="btn btn-small btn-danger" type="button" data-action="remove" data-path="${attr(path)}" data-index="${index}">Hapus</button>
-              </div>
-            </div>
-            <div class="array-card-body">${renderFields(index, item)}</div>
-          </div>`).join('');
-        return `
-          <div class="array-block">
-            <div class="array-title"><h3>${esc(title)}</h3><button class="btn btn-small btn-accent" type="button" data-action="add" data-path="${attr(path)}">+ Tambah</button></div>
-            <div class="array-list">${items || `<div class="hint-box"><strong>Masih kosong</strong>Klik Tambah untuk membuat item pertama.</div>`}</div>
-          </div>`;
-      }
-
-      function stringArrayEditor(path, title, label) {
-        return arrayEditor(path, title, (index) => input(label || 'Teks', `${path}.${index}`, { full: true }), { itemLabel: label || 'Item' });
-      }
-
-      function renderGlobal() {
-        return `
-          ${sectionHeader('SEO', 'Judul, deskripsi, keyword, dan gambar preview saat link website dibagikan.')}
-          <div class="form-grid">
-            ${input('Meta title', 'meta.title', { full: true })}
-            ${input('Meta description', 'meta.description', { type: 'textarea', full: true, rows: 3 })}
-            ${input('Meta keywords', 'meta.keywords', { type: 'textarea', full: true, rows: 2 })}
-            ${imageInput('OG image', 'meta.ogImage', { full: true, hint: 'Paste link Google Drive, file ID, assets/otsky-og-image.jpg, atau URL gambar penuh.' })}
+            ${imageThumbHtml(value)}
           </div>
-          ${sectionHeader('Brand', 'Identitas utama yang muncul di header, footer, dan floating WhatsApp.')}
-          <div class="form-grid">
-            ${input('Nama brand', 'brand.name')}
-            ${input('Tagline', 'brand.tagline')}
-            ${input('Logo text pendek', 'brand.logoText')}
-            ${input('Established label', 'brand.established')}
-            ${input('Announcement bar', 'brand.announcement', { type: 'textarea', full: true, rows: 2 })}
-            ${input('WhatsApp URL', 'brand.whatsappUrl', { full: true, hint: 'Format: https://wa.me/628xxxxxxxxxx' })}
-            ${input('Instagram URL', 'brand.instagramUrl', { full: true })}
+        </div>`;
+      }
+      return `<div class="field${wide}"><label for="${id}">${label}</label><input id="${id}" data-field="${key}" type="${type}" value="${escapeAttr(value)}"></div>`;
+    }
+
+    function renderList(section) {
+      const list = $(`${section}List`);
+      const rows = state[section] || [];
+      if (!rows.length) {
+        list.innerHTML = `<div class="notice">Belum ada data. Klik tombol tambah untuk membuat ${section === "categories" ? "kategori" : section === "products" ? "produk" : "promo"}.</div>`;
+        return;
+      }
+      const gridClass = section === "products" ? "product" : section === "promos" ? "promo" : "";
+      list.innerHTML = rows.map((item, index) => `
+        <article class="item" data-section="${section}" data-index="${index}">
+          <div class="item-top">
+            <div class="item-title">${escapeHtml(itemTitle(section, item, index))}</div>
+            <button class="btn danger small" type="button" data-action="delete" data-section="${section}" data-index="${index}">Hapus</button>
           </div>
-          ${arrayEditor('navigation', 'Menu navigasi', (i) => `<div class="form-grid">${input('Label menu', `navigation.${i}.label`)}${input('URL / anchor', `navigation.${i}.url`)}</div>`, { itemLabel: 'Menu' })}`;
-      }
-
-      function renderHero() {
-        return `
-          <div class="form-grid">
-            ${input('Eyebrow', 'hero.eyebrow', { full: true })}
-            ${input('Headline', 'hero.title', { type: 'textarea', full: true, rows: 2 })}
-            ${input('Deskripsi', 'hero.description', { type: 'textarea', full: true, rows: 3 })}
-            ${input('Label tombol utama', 'hero.primaryButton.label')}
-            ${input('URL tombol utama', 'hero.primaryButton.url')}
-            ${input('Label tombol kedua', 'hero.secondaryButton.label')}
-            ${input('URL tombol kedua', 'hero.secondaryButton.url')}
-            ${imageInput('Gambar hero', 'hero.image', { full: true, hint: 'Kosongkan untuk memakai placeholder. Bisa pakai Google Drive link/file ID, assets/hero.jpg, atau URL gambar.' })}
-            ${input('Alt text gambar hero', 'hero.imageAlt', { full: true })}
+          <div class="row-grid ${gridClass}">
+            ${schemas[section].map(field => fieldHtml(section, index, field, item)).join("")}
           </div>
-          ${stringArrayEditor('hero.badges', 'Badge kecil di hero', 'Badge')}
-          ${arrayEditor('hero.stats', 'Statistik hero', (i) => `<div class="form-grid">${input('Angka', `hero.stats.${i}.number`)}${input('Label', `hero.stats.${i}.label`)}</div>`, { itemLabel: 'Statistik' })}`;
-      }
+        </article>
+      `).join("");
+    }
 
-      function renderTrust() {
-        return `
-          ${arrayEditor('trust', 'Trust bar / USP', (i) => `<div class="form-grid">${input('Judul', `trust.${i}.title`)}${input('Deskripsi', `trust.${i}.description`, { type: 'textarea', rows: 2 })}</div>`, { itemLabel: 'USP' })}
-          <div class="array-block">
-            ${sectionHeader('Header kategori', 'Judul dan deskripsi section kategori.')}
-            <div class="form-grid">
-              ${input('Eyebrow kategori', 'categories.eyebrow')}
-              ${input('Judul kategori', 'categories.title')}
-              ${input('Deskripsi kategori', 'categories.description', { type: 'textarea', full: true, rows: 2 })}
-            </div>
-          </div>
-          ${arrayEditor('categories.items', 'Kategori produk', (i) => `<div class="form-grid">${input('Icon teks', `categories.items.${i}.icon`)}${input('Nama kategori', `categories.items.${i}.title`)}${input('URL', `categories.items.${i}.url`)}${imageInput('Gambar', `categories.items.${i}.image`, { full: true })}${input('Deskripsi', `categories.items.${i}.description`, { type: 'textarea', full: true, rows: 2 })}</div>`, { itemLabel: 'Kategori' })}`;
-      }
+    function renderAll() {
+      renderAnnouncement();
+      renderList("categories");
+      renderList("products");
+      renderList("promos");
+    }
 
-      function renderProducts() {
-        return `
-          <div class="form-grid">
-            ${input('Eyebrow', 'products.eyebrow')}
-            ${input('Judul section', 'products.title')}
-            ${input('Deskripsi section', 'products.description', { type: 'textarea', full: true, rows: 2 })}
-            ${input('Label CTA', 'products.cta.label')}
-            ${input('URL CTA', 'products.cta.url')}
-          </div>
-          ${arrayEditor('products.items', 'Daftar produk', (i) => `<div class="form-grid">${input('Badge', `products.items.${i}.badge`)}${input('Nama produk', `products.items.${i}.name`)}${input('Kategori', `products.items.${i}.category`)}${input('Harga', `products.items.${i}.price`)}${input('Link beli', `products.items.${i}.url`, { full: true })}${imageInput('Gambar produk', `products.items.${i}.image`, { full: true, hint: 'Paste link Google Drive/file ID, upload ke GDrive, atau URL gambar produk.' })}${input('Deskripsi', `products.items.${i}.description`, { type: 'textarea', full: true, rows: 2 })}</div>`, { itemLabel: 'Produk' })}`;
-      }
-
-      function renderPromo() {
-        return `
-          <div class="form-grid">
-            ${input('Eyebrow', 'promos.eyebrow')}
-            ${input('Judul section', 'promos.title')}
-            ${input('Deskripsi section', 'promos.description', { type: 'textarea', full: true, rows: 2 })}
-          </div>
-          ${arrayEditor('promos.items', 'Daftar promo', (i) => `<div class="form-grid">${input('Label kecil', `promos.items.${i}.label`)}${input('Judul promo', `promos.items.${i}.title`)}${input('URL promo', `promos.items.${i}.url`, { full: true })}${input('Deskripsi promo', `promos.items.${i}.description`, { type: 'textarea', full: true, rows: 2 })}</div>`, { itemLabel: 'Promo' })}`;
-      }
-
-      function renderStory() {
-        return `
-          <div class="form-grid">
-            ${input('Eyebrow', 'story.eyebrow')}
-            ${input('Judul', 'story.title')}
-            ${imageInput('Gambar story', 'story.image', { full: true })}
-            ${input('Alt text gambar', 'story.imageAlt', { full: true })}
-          </div>
-          ${stringArrayEditor('story.paragraphs', 'Paragraf brand story', 'Paragraf')}
-          ${stringArrayEditor('story.highlights', 'Highlight brand', 'Highlight')}`;
-      }
-
-      function renderLookbook() {
-        return `
-          <div class="form-grid">
-            ${input('Eyebrow', 'lookbook.eyebrow')}
-            ${input('Judul section', 'lookbook.title')}
-            ${input('Deskripsi section', 'lookbook.description', { type: 'textarea', full: true, rows: 2 })}
-          </div>
-          ${arrayEditor('lookbook.items', 'Item lookbook', (i) => `<div class="form-grid">${input('Judul look', `lookbook.items.${i}.title`)}${imageInput('Gambar', `lookbook.items.${i}.image`, { full: true })}${input('Deskripsi', `lookbook.items.${i}.description`, { type: 'textarea', full: true, rows: 2 })}</div>`, { itemLabel: 'Look' })}`;
-      }
-
-      function renderChannels() {
-        return `
-          <div class="form-grid">
-            ${input('Eyebrow', 'channels.eyebrow')}
-            ${input('Judul section', 'channels.title')}
-            ${input('Deskripsi section', 'channels.description', { type: 'textarea', full: true, rows: 2 })}
-          </div>
-          ${arrayEditor('channels.items', 'Kanal resmi', (i) => `<div class="form-grid">${input('Nama channel', `channels.items.${i}.name`)}${input('URL', `channels.items.${i}.url`)}${input('Deskripsi', `channels.items.${i}.description`, { type: 'textarea', full: true, rows: 2 })}</div>`, { itemLabel: 'Channel' })}`;
-      }
-
-      function renderFaq() {
-        return `
-          <div class="form-grid">
-            ${input('Eyebrow', 'faq.eyebrow')}
-            ${input('Judul section', 'faq.title')}
-            ${input('Deskripsi section', 'faq.description', { type: 'textarea', full: true, rows: 2 })}
-          </div>
-          ${arrayEditor('faq.items', 'Daftar FAQ', (i) => `<div class="form-grid">${input('Pertanyaan', `faq.items.${i}.question`, { full: true })}${input('Jawaban', `faq.items.${i}.answer`, { type: 'textarea', full: true, rows: 3 })}</div>`, { itemLabel: 'FAQ' })}`;
-      }
-
-      function renderFooter() {
-        return `
-          <div class="form-grid">
-            ${input('Deskripsi footer', 'footer.description', { type: 'textarea', full: true, rows: 3 })}
-            ${input('Copyright', 'footer.copyright', { full: true })}
-          </div>
-          ${arrayEditor('footer.links', 'Link footer', (i) => `<div class="form-grid">${input('Label link', `footer.links.${i}.label`)}${input('URL', `footer.links.${i}.url`)}</div>`, { itemLabel: 'Footer link' })}`;
-      }
-
-      const renderers = {
-        global: renderGlobal,
-        hero: renderHero,
-        trust: renderTrust,
-        products: renderProducts,
-        promo: renderPromo,
-        story: renderStory,
-        lookbook: renderLookbook,
-        channels: renderChannels,
-        faq: renderFaq,
-        footer: renderFooter
-      };
-
-      function renderTabs() {
-        $('#sectionTabs').innerHTML = sections.map((section) => `
-          <button class="section-tab ${section.id === currentSection ? 'active' : ''}" type="button" data-section="${section.id}">
-            <span>${esc(section.label)}</span><span aria-hidden="true">›</span>
-          </button>`).join('');
-      }
-
-      function renderCurrentSection() {
-        const section = sections.find((item) => item.id === currentSection) || sections[0];
-        $('#sectionTitle').textContent = section.title;
-        $('#sectionSubtitle').textContent = section.help;
-        $('#editorHeading').textContent = section.title;
-        $('#editorHelp').textContent = section.help;
-        $('#editor').innerHTML = renderers[currentSection] ? renderers[currentSection]() : '<p>Section belum tersedia.</p>';
-        renderTabs();
-        updateJsonPreview();
-        renderQuality();
-      }
-
-      function updateJsonPreview() {
-        $('#jsonPreview').textContent = JSON.stringify(state, null, 2);
-      }
-
-      function validateUrl(value) {
-        if (!value) return false;
-        if (String(value).startsWith('#')) return true;
-        try { new URL(value, window.location.href); return true; } catch (e) { return false; }
-      }
-
-      function addQuality(items, ok, message) {
-        items.push({ ok, message });
-      }
-
-      function renderQuality() {
-        const items = [];
-        addQuality(items, Boolean(getPath('meta.title')), 'Meta title terisi');
-        addQuality(items, String(getPath('meta.description') || '').length >= 80, 'Meta description idealnya minimal 80 karakter');
-        addQuality(items, Boolean(getPath('hero.title')), 'Headline hero terisi');
-        addQuality(items, ensureArray('products.items').length > 0, 'Minimal ada 1 produk unggulan');
-        addQuality(items, ensureArray('channels.items').some((item) => item.url && item.url !== '#'), 'Minimal ada 1 official channel dengan link aktif');
-        addQuality(items, validateUrl(getPath('brand.whatsappUrl')), 'WhatsApp URL valid');
-        const placeholderUrls = JSON.stringify(state).match(/"url"\s*:\s*"#"/g) || [];
-        addQuality(items, placeholderUrls.length === 0, placeholderUrls.length === 0 ? 'Tidak ada URL placeholder #' : `${placeholderUrls.length} URL masih placeholder #`);
-        $('#qualityList').innerHTML = items.map((item) => `<li class="${item.ok ? 'ok' : 'warn'}">${item.ok ? '✓' : '!' } ${esc(item.message)}</li>`).join('');
-      }
-
-      function handleArrayAction(button) {
-        const action = button.dataset.action;
-        const path = button.dataset.path;
-        if (!path || !action) return;
-        const arr = ensureArray(path);
-        const index = Number(button.dataset.index);
-        if (action === 'add') arr.push(clone(templates[path] ?? 'Item baru'));
-        if (action === 'remove') arr.splice(index, 1);
-        if (action === 'duplicate') arr.splice(index + 1, 0, clone(arr[index]));
-        if (action === 'up' && index > 0) [arr[index - 1], arr[index]] = [arr[index], arr[index - 1]];
-        if (action === 'down' && index < arr.length - 1) [arr[index + 1], arr[index]] = [arr[index], arr[index + 1]];
-        renderCurrentSection();
-        markDirty('Perubahan item diterapkan.');
-      }
-
-      function exportJson() {
-        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'content.json';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        showStatus('File content.json berhasil dibuat.', 'success');
-      }
-
-      async function copyJson() {
-        try {
-          await navigator.clipboard.writeText(JSON.stringify(state, null, 2));
-          showStatus('JSON berhasil disalin.', 'success');
-        } catch (error) {
-          showStatus('Clipboard tidak tersedia. Gunakan export JSON.', 'error');
+    function collectList(section) {
+      const rows = Array.from(document.querySelectorAll(`.item[data-section="${section}"]`));
+      return rows.map(row => {
+        const item = {};
+        for (const [key, , type] of schemas[section]) {
+          const input = row.querySelector(`[data-field="${key}"]`);
+          if (!input) continue;
+          item[key] = type === "checkbox" ? input.checked : input.value.trim();
         }
-      }
+        item.order = Number(item.order || 0);
+        return item;
+      });
+    }
 
-      function saveDraft() {
-        localStorage.setItem(STORAGE_DRAFT, JSON.stringify(state));
-        showStatus('Draft tersimpan di browser ini.', 'success');
-      }
+    function collectAll() {
+      state = normalizeContent({
+        announcement: collectAnnouncement(),
+        categories: collectList("categories"),
+        products: collectList("products"),
+        promos: collectList("promos")
+      });
+      return state;
+    }
 
-      function preview() {
-        localStorage.setItem(STORAGE_PREVIEW, JSON.stringify(state));
-        window.open('index.html?preview=1', '_blank', 'noopener');
-      }
+    function blankItem(section) {
+      const order = (state[section] || []).length + 1;
+      if (section === "categories") return {active: true, order, name: "Kategori Baru", description: "", image: "", link: "#produk"};
+      if (section === "products") return {active: true, order, name: "Produk Baru", category: "", price: "", badge: "", description: "", image: "", link: ""};
+      return {active: true, order, title: "Promo Baru", description: "", badge: "", image: "", buttonText: "Lihat Promo", buttonLink: ""};
+    }
 
-      async function saveToServer() {
-        async function post(password) {
-          const headers = { 'Content-Type': 'application/json' };
-          if (password) headers['x-cms-password'] = password;
-          return fetch('/api/content', { method: 'POST', headers, body: JSON.stringify(state, null, 2) });
-        }
-        try {
-          let password = localStorage.getItem(STORAGE_PASSWORD) || '';
-          let response = await post(password);
-          if (response.status === 401 || response.status === 403) {
-            password = window.prompt('Masukkan admin password untuk menyimpan ke server:') || '';
-            if (!password) { showStatus('Save ke server dibatalkan.', 'error'); return; }
-            localStorage.setItem(STORAGE_PASSWORD, password);
-            response = await post(password);
-          }
-          if (!response.ok) {
-            const text = await response.text();
-            throw new Error(text || `HTTP ${response.status}`);
-          }
-          showStatus('content.json tersimpan ke server.', 'success');
-        } catch (error) {
-          console.warn(error);
-          showStatus('Server save tidak tersedia. Gunakan Export content.json.', 'error');
-        }
-      }
+    function switchTab(name) {
+      document.querySelectorAll(".tab").forEach(tab => tab.classList.toggle("active", tab.dataset.tab === name));
+      document.querySelectorAll(".panel").forEach(panel => panel.classList.toggle("active", panel.id === `panel-${name}`));
+    }
 
-      function getDefaultApiUrl() {
-        return String(window.OTSKY_CMS_CONFIG?.apiUrl || '').trim();
-      }
-
-      function getGsheetConfigFromFields() {
-        return {
-          apiUrl: $('#gsApiUrl')?.value.trim() || getDefaultApiUrl(),
-          adminKey: $('#gsAdminKey')?.value.trim() || ''
-        };
-      }
-
-      function applyGsheetConfigToFields(config = {}) {
-        if ($('#gsApiUrl')) $('#gsApiUrl').value = config.apiUrl || getDefaultApiUrl();
-        if ($('#gsAdminKey')) $('#gsAdminKey').value = '';
-      }
-
-      function loadGsheetConfig() {
-        try {
-          const saved = JSON.parse(localStorage.getItem(STORAGE_GSHEET) || '{}');
-          return { apiUrl: saved.apiUrl || getDefaultApiUrl() };
-        } catch (error) {
-          return { apiUrl: getDefaultApiUrl() };
-        }
-      }
-
-      function saveGsheetConfig(silent = false) {
-        const { apiUrl } = getGsheetConfigFromFields();
-        localStorage.setItem(STORAGE_GSHEET, JSON.stringify({ apiUrl }));
-        if (!silent) showStatus('URL Apps Script tersimpan di browser. Admin key tidak disimpan.', 'success');
-      }
-
-      function openGsheetModal() {
-        applyGsheetConfigToFields(loadGsheetConfig());
-        $('#gsheetModal').hidden = false;
-        setTimeout(() => $('#gsApiUrl')?.focus(), 0);
-      }
-
-      function closeGsheetModal() {
-        $('#gsheetModal').hidden = true;
-      }
-
-      function appendQuery(url, params) {
-        const query = new URLSearchParams(params);
-        return `${url}${String(url).includes('?') ? '&' : '?'}${query.toString()}`;
-      }
-
-      function jsonpRequest(apiUrl, params = {}) {
-        return new Promise((resolve, reject) => {
-          const callbackName = `otskyAdminCms_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-          const timeoutMs = Number(window.OTSKY_CMS_CONFIG?.gsheetLoadTimeoutMs || 12000);
-          const script = document.createElement('script');
-          const timer = window.setTimeout(() => {
-            cleanup();
-            reject(new Error('Request Google Sheet timeout.'));
-          }, timeoutMs);
-
-          function cleanup() {
-            window.clearTimeout(timer);
-            try { delete window[callbackName]; } catch (error) { window[callbackName] = undefined; }
-            script.remove();
-          }
-
-          window[callbackName] = (payload) => {
-            cleanup();
-            if (payload && payload.ok === false) {
-              reject(new Error(payload.error || 'Google Sheet mengembalikan error.'));
-              return;
-            }
-            resolve(payload);
-          };
-
-          script.onerror = () => {
-            cleanup();
-            reject(new Error('Tidak bisa memuat endpoint Google Sheet.'));
-          };
-          script.src = appendQuery(apiUrl, { action: 'get', callback: callbackName, _: Date.now(), ...params });
-          document.head.appendChild(script);
-        });
-      }
-
-      function extractCmsContent(payload) {
-        if (!payload) throw new Error('Response Google Sheet kosong.');
-        if (payload.ok === false) throw new Error(payload.error || 'Response Google Sheet gagal.');
-        return payload.content || payload.data || payload;
-      }
-
-      async function loadContentFromGsheet(apiUrl) {
-        if (!apiUrl) throw new Error('Apps Script Web App URL belum diisi.');
-        const payload = await jsonpRequest(apiUrl, { action: 'get' });
-        return extractCmsContent(payload);
-      }
-
-      function postViaHiddenFrame(apiUrl, payload) {
-        return new Promise((resolve) => {
-          const frameName = `otskyPostFrame_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-          const iframe = document.createElement('iframe');
-          iframe.name = frameName;
-          iframe.style.display = 'none';
-          const form = document.createElement('form');
-          form.method = 'POST';
-          form.action = apiUrl;
-          form.target = frameName;
-          form.style.display = 'none';
-
-          const payloadInput = document.createElement('input');
-          payloadInput.type = 'hidden';
-          payloadInput.name = 'payload';
-          payloadInput.value = JSON.stringify(payload);
-          form.appendChild(payloadInput);
-
-          const actionInput = document.createElement('input');
-          actionInput.type = 'hidden';
-          actionInput.name = 'action';
-          actionInput.value = 'save';
-          form.appendChild(actionInput);
-
-          let resolved = false;
-          const cleanup = () => {
-            window.setTimeout(() => {
-              form.remove();
-              iframe.remove();
-            }, 1000);
-          };
-          const done = () => {
-            if (resolved) return;
-            resolved = true;
-            cleanup();
-            resolve();
-          };
-          iframe.onload = () => window.setTimeout(done, 800);
-          document.body.appendChild(iframe);
-          document.body.appendChild(form);
-          form.submit();
-          window.setTimeout(done, 4200);
-        });
-      }
-
-      function postViaMessageFrame(apiUrl, payload, timeoutMs = 45000) {
-        return new Promise((resolve, reject) => {
-          if (!apiUrl) { reject(new Error('Apps Script Web App URL belum diisi.')); return; }
-          const clientId = `otskyPostMsg_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-          const frameName = `otskyMessageFrame_${clientId}`;
-          const iframe = document.createElement('iframe');
-          iframe.name = frameName;
-          iframe.style.display = 'none';
-          const form = document.createElement('form');
-          form.method = 'POST';
-          form.action = apiUrl;
-          form.target = frameName;
-          form.style.display = 'none';
-
-          const finalPayload = { ...payload, responseMode: 'postMessage', clientId };
-          const payloadInput = document.createElement('input');
-          payloadInput.type = 'hidden';
-          payloadInput.name = 'payload';
-          payloadInput.value = JSON.stringify(finalPayload);
-          form.appendChild(payloadInput);
-
-          let settled = false;
-          const cleanup = () => {
-            window.removeEventListener('message', onMessage);
-            window.clearTimeout(timer);
-            window.setTimeout(() => { form.remove(); iframe.remove(); }, 1000);
-          };
-          const finish = (fn, value) => {
-            if (settled) return;
-            settled = true;
-            cleanup();
-            fn(value);
-          };
-          const onMessage = (event) => {
-            let data = event.data;
-            if (typeof data === 'string') {
-              try { data = JSON.parse(data); } catch (error) { return; }
-            }
-            if (!data || data.clientId !== clientId) return;
-            const result = data.payload || data.result || data;
-            if (result.ok === false) finish(reject, new Error(result.error || 'Request Apps Script gagal.'));
-            else finish(resolve, result);
-          };
-          const timer = window.setTimeout(() => finish(reject, new Error('Upload timeout. Cek koneksi, ukuran foto, atau permission Apps Script.')), timeoutMs);
-
-          window.addEventListener('message', onMessage);
-          document.body.appendChild(iframe);
-          document.body.appendChild(form);
-          form.submit();
-        });
-      }
-
-      function blobToBase64(blob) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(String(reader.result || '').split(',')[1] || '');
-          reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
-          reader.readAsDataURL(blob);
-        });
-      }
-
-      function loadImageFromFile(file) {
-        return new Promise((resolve, reject) => {
-          const url = URL.createObjectURL(file);
-          const image = new Image();
-          image.onload = () => { URL.revokeObjectURL(url); resolve(image); };
-          image.onerror = () => { URL.revokeObjectURL(url); reject(new Error('File gambar tidak bisa dibuka.')); };
-          image.src = url;
-        });
-      }
-
-      async function prepareImageForUpload(file) {
-        const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-        if (!allowed.includes(file.type)) throw new Error('Format foto harus JPG, PNG, WEBP, atau GIF.');
-        if (file.type === 'image/gif' && file.size <= 3500000) return { blob: file, filename: file.name || 'otsky-product.gif', mimeType: file.type };
-        const image = await loadImageFromFile(file);
-        const maxSide = 1800;
-        const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
-        const width = Math.max(1, Math.round(image.width * scale));
-        const height = Math.max(1, Math.round(image.height * scale));
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, width, height);
-        ctx.drawImage(image, 0, 0, width, height);
-        const blob = await new Promise((resolve, reject) => canvas.toBlob((result) => result ? resolve(result) : reject(new Error('Gagal kompres gambar.')), 'image/jpeg', 0.84));
-        const cleanBase = String(file.name || 'otsky-product').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'otsky-product';
-        return { blob, filename: `${cleanBase}.jpg`, mimeType: 'image/jpeg' };
-      }
-
-      async function uploadImageToGdrive(path, file) {
-        const config = getGsheetConfigFromFields();
-        const missing = [];
-        if (!config.apiUrl) missing.push('Apps Script Web App URL');
-        if (!config.adminKey) missing.push('Admin key');
-        if (missing.length) {
-          openGsheetModal();
-          throw new Error(`Lengkapi ${missing.join(' dan ')} dulu untuk upload foto ke Google Drive.`);
-        }
-        showStatus('Menyiapkan foto sebelum upload...', 'normal');
-        const prepared = await prepareImageForUpload(file);
-        if (prepared.blob.size > 6500000) throw new Error('Ukuran foto setelah kompres masih terlalu besar. Pakai foto di bawah ±6 MB.');
-        const base64 = await blobToBase64(prepared.blob);
-        showStatus('Mengupload foto ke Google Drive...', 'normal');
-        const result = await postViaMessageFrame(config.apiUrl, {
-          action: 'uploadImage',
-          adminKey: config.adminKey,
-          filename: prepared.filename,
-          mimeType: prepared.mimeType,
-          data: base64
-        }, 60000);
-        if (!result || result.ok === false) throw new Error(result?.error || 'Upload Google Drive gagal.');
-        const imageUrl = result.imageUrl || result.viewUrl || '';
-        if (!imageUrl) throw new Error('Upload berhasil tetapi URL gambar kosong.');
-        setPath(path, imageUrl);
-        markDirty('Foto produk dari Google Drive diterapkan.');
-        renderCurrentSection();
-        showStatus(result.warning ? `Foto terupload, tapi cek sharing Drive: ${result.warning}` : 'Foto berhasil diupload ke Google Drive.', result.warning ? 'error' : 'success');
-      }
-
-      async function loadFromGsheetButton() {
-        try {
-          const config = getGsheetConfigFromFields().apiUrl ? getGsheetConfigFromFields() : loadGsheetConfig();
-          if (!config.apiUrl) { openGsheetModal(); return; }
-          saveGsheetConfig(true);
-          const remoteContent = await loadContentFromGsheet(config.apiUrl);
-          state = remoteContent;
-          renderCurrentSection();
-          showStatus('Konten berhasil dimuat dari Google Sheet.', 'success');
-          closeGsheetModal();
-        } catch (error) {
-          console.error(error);
-          showStatus(error.message || 'Gagal memuat Google Sheet.', 'error');
-        }
-      }
-
-      async function saveContentToGsheet() {
-        const config = getGsheetConfigFromFields();
-        const missing = [];
-        if (!config.apiUrl) missing.push('Apps Script Web App URL');
-        if (!config.adminKey) missing.push('Admin key');
-        if (missing.length) {
-          showStatus(`Lengkapi field: ${missing.join(', ')}`, 'error');
-          openGsheetModal();
-          return;
-        }
-        saveGsheetConfig(true);
-        const saveId = `save_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-        const payload = { action: 'save', adminKey: config.adminKey, saveId, content: state };
-        let directResponseReadable = false;
-
-        try {
-          const response = await fetch(config.apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload),
-            redirect: 'follow'
-          });
-          const text = await response.text();
-          let result;
-          try { result = JSON.parse(text); } catch (error) { throw new Error('Response Apps Script tidak terbaca sebagai JSON. Fallback form POST dipakai.'); }
-          if (!response.ok || result.ok === false) throw new Error(result.error || `Apps Script HTTP ${response.status}`);
-          directResponseReadable = true;
-        } catch (error) {
-          console.warn('Direct POST gagal/terblokir CORS, fallback ke hidden form POST.', error);
-          await postViaHiddenFrame(config.apiUrl, payload);
-        }
-
-        try {
-          const verification = await jsonpRequest(config.apiUrl, { action: 'get' });
-          const remoteContent = extractCmsContent(verification);
-          state = remoteContent;
-          renderCurrentSection();
-          const verified = verification?.revision === saveId;
-          showStatus(verified || directResponseReadable ? 'Perubahan berhasil tersimpan ke Google Sheet.' : 'Request terkirim. Reload admin untuk memastikan perubahan.', verified || directResponseReadable ? 'success' : 'normal');
-          if (verified || directResponseReadable) closeGsheetModal();
-        } catch (error) {
-          console.warn('Verifikasi Google Sheet gagal.', error);
-          showStatus(directResponseReadable ? 'Tersimpan, tapi verifikasi reload gagal.' : 'Request terkirim, tapi belum bisa diverifikasi. Cek Sheet.', directResponseReadable ? 'success' : 'error');
-        }
-      }
-
-      function importJsonFile(file) {
-        const reader = new FileReader();
-        reader.onload = () => {
+    async function saveContent() {
+      saveConnection();
+      const url = getApiUrl();
+      if (!url) { setStatus("Apps Script URL masih kosong. Isi URL dulu agar bisa simpan ke GSheet.", "err"); return; }
+      const content = collectAll();
+      setStatus("Mengirim perubahan ke Google Sheet...", "warn");
+      const payload = { action: "save", content };
+      try {
+        await fetch(url, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+        setStatus("Perubahan sudah dikirim. Memuat ulang untuk verifikasi...", "warn");
+        window.setTimeout(async () => {
           try {
-            const parsed = JSON.parse(reader.result);
-            state = parsed;
-            renderCurrentSection();
-            showStatus('JSON berhasil di-import.', 'success');
-          } catch (error) {
-            showStatus('File JSON tidak valid.', 'error');
+            const reloaded = normalizeContent(await loadJsonp(url, CONFIG.loadTimeoutMs));
+            const before = JSON.stringify(content);
+            const after = JSON.stringify(reloaded);
+            state = reloaded;
+            renderAll();
+            if (before === after) setStatus("Berhasil disimpan dan terverifikasi dari Google Sheet.", "ok");
+            else setStatus("Data berhasil dimuat ulang, tapi hasilnya tidak sama persis. Cek Google Sheet apakah perubahan masuk.", "warn");
+          } catch (verifyError) {
+            console.error(verifyError);
+            setStatus("Perubahan sudah dikirim, tapi verifikasi gagal. Cek langsung Google Sheet.", "warn");
           }
-        };
-        reader.readAsText(file);
+        }, 2200);
+      } catch (error) {
+        console.error(error);
+        setStatus("Gagal mengirim perubahan. Cek URL Apps Script dan koneksi.", "err");
       }
+    }
 
-      async function loadInitial() {
-        const config = loadGsheetConfig();
-        applyGsheetConfigToFields(config);
-        if (config.apiUrl) {
-          try {
-            state = await loadContentFromGsheet(config.apiUrl);
-            showStatus('Konten Google Sheet dimuat.', 'success');
-            renderCurrentSection();
-            return;
-          } catch (error) {
-            console.warn('Gagal load dari Google Sheet, fallback ke draft/content.json.', error);
-          }
-        }
-        try {
-          const draft = localStorage.getItem(STORAGE_DRAFT);
-          if (draft) {
-            state = JSON.parse(draft);
-            showStatus('Draft browser dimuat.', 'success');
-            renderCurrentSection();
-            return;
-          }
-        } catch (error) { console.warn('Draft tidak valid', error); }
-        try {
-          const response = await fetch('content.json?v=' + Date.now(), { cache: 'no-store' });
-          if (response.ok) state = await response.json();
-        } catch (error) { console.warn('Memakai default content.', error); }
-        renderCurrentSection();
+    document.addEventListener("click", event => {
+      const tab = event.target.closest(".tab");
+      if (tab) switchTab(tab.dataset.tab);
+
+      const actionBtn = event.target.closest("[data-action]");
+      if (!actionBtn) return;
+      const action = actionBtn.dataset.action;
+      const section = actionBtn.dataset.section;
+      if (!section || !schemas[section]) return;
+      collectAll();
+      if (action === "add") {
+        state[section].push(blankItem(section));
+        renderList(section);
       }
+      if (action === "delete") {
+        const index = Number(actionBtn.dataset.index);
+        state[section].splice(index, 1);
+        renderList(section);
+      }
+    });
 
-      document.addEventListener('input', (event) => {
-        const path = event.target?.dataset?.bind;
-        if (!path) return;
-        setPath(path, event.target.value);
-        if (event.target?.dataset?.imageInput) {
-          const field = event.target.closest('.image-field');
-          const preview = field?.querySelector('.image-preview');
-          if (preview) preview.innerHTML = imagePreviewMarkup(event.target.value, 'Preview foto');
-        }
-        markDirty();
-      });
+    document.addEventListener("input", event => {
+      const field = event.target.closest("[data-field='image']");
+      if (!field) return;
+      const helper = field.closest(".image-helper");
+      if (!helper) return;
+      const thumb = helper.querySelector(".thumb");
+      const src = imageUrl(field.value);
+      thumb.innerHTML = src ? `<img src="${escapeAttr(src)}" alt="Preview" onerror="this.parentElement.textContent='Link gambar belum bisa tampil'">` : "Preview";
+    });
 
-      document.addEventListener('click', (event) => {
-        const imageNormalize = event.target.closest('[data-image-normalize]');
-        if (imageNormalize) {
-          const path = imageNormalize.dataset.imageNormalize;
-          const current = getPath(path) || '';
-          const normalized = normalizeImageUrl(current);
-          if (!normalized) { showStatus('Isi link/file ID Google Drive dulu.', 'error'); return; }
-          setPath(path, normalized);
-          renderCurrentSection();
-          markDirty('URL gambar Google Drive diterapkan.');
-          return;
-        }
-        const tab = event.target.closest('[data-section]');
-        if (tab) {
-          currentSection = tab.dataset.section;
-          renderCurrentSection();
-          return;
-        }
-        const actionButton = event.target.closest('[data-action]');
-        if (actionButton) {
-          handleArrayAction(actionButton);
-        }
-      });
+    $("loadBtn").addEventListener("click", loadContent);
+    $("saveBtn").addEventListener("click", saveContent);
+    $("saveTop").addEventListener("click", saveContent);
+    $("saveBottom").addEventListener("click", saveContent);
 
-      $('#saveDraftBtn').addEventListener('click', saveDraft);
-      $('#previewBtn').addEventListener('click', preview);
-      $('#exportBtn').addEventListener('click', exportJson);
-      $('#importBtn').addEventListener('click', () => $('#fileInput').click());
-      document.addEventListener('change', (event) => {
-        const path = event.target?.dataset?.imageUpload;
-        if (!path) return;
-        const file = event.target.files?.[0];
-        event.target.value = '';
-        if (!file) return;
-        uploadImageToGdrive(path, file).catch((error) => {
-          console.error(error);
-          showStatus(error.message || 'Upload foto ke Google Drive gagal.', 'error');
-        });
-      });
-
-      $('#fileInput').addEventListener('change', (event) => {
-        const file = event.target.files?.[0];
-        if (file) importJsonFile(file);
-        event.target.value = '';
-      });
-      const saveServerButton = $('#saveServerBtn');
-      if (saveServerButton) saveServerButton.addEventListener('click', saveToServer);
-      $('#loadGsheetBtn')?.addEventListener('click', () => {
-        const config = loadGsheetConfig();
-        if (!config.apiUrl) { openGsheetModal(); return; }
-        loadContentFromGsheet(config.apiUrl).then((remoteContent) => {
-          state = remoteContent;
-          renderCurrentSection();
-          showStatus('Konten berhasil dimuat dari Google Sheet.', 'success');
-        }).catch((error) => {
-          console.error(error);
-          showStatus(error.message || 'Gagal memuat Google Sheet.', 'error');
-          openGsheetModal();
-        });
-      });
-      $('#gsheetBtn')?.addEventListener('click', openGsheetModal);
-      $('#gsheetCloseBtn')?.addEventListener('click', closeGsheetModal);
-      $('#gsheetSaveConfigBtn')?.addEventListener('click', () => saveGsheetConfig(false));
-      $('#gsheetLoadRemoteBtn')?.addEventListener('click', () => loadFromGsheetButton());
-      $('#gsheetSaveRemoteBtn')?.addEventListener('click', () => {
-        saveContentToGsheet().catch((error) => {
-          console.error(error);
-          showStatus(error.message || 'Gagal menyimpan ke Google Sheet.', 'error');
-        });
-      });
-      $('#gsheetModal')?.addEventListener('click', (event) => {
-        if (event.target === $('#gsheetModal')) closeGsheetModal();
-      });
-      $('#copyJsonBtn').addEventListener('click', copyJson);
-      $('#resetBtn').addEventListener('click', () => {
-        if (!window.confirm('Reset semua isi ke default awal? Draft browser juga akan dihapus.')) return;
-        localStorage.removeItem(STORAGE_DRAFT);
-        state = clone(DEFAULT_CONTENT);
-        renderCurrentSection();
-        showStatus('Konten di-reset ke default.', 'success');
-      });
-
-      loadInitial();
-    })();
+    loadSavedConnection();
+    loadContent();
   </script>
 </body>
 </html>
