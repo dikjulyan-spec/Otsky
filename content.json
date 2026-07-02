@@ -1,0 +1,94 @@
+{
+  "announcement": {
+    "popupEnabled": true,
+    "popupTitle": "Promo Spesial Minggu Ini",
+    "popupMessage": "Dapatkan bundle kaos pilihan mulai dari harga spesial. Cek promo sebelum kehabisan.",
+    "popupButtonText": "Lihat Promo",
+    "popupButtonLink": "#promo",
+    "tickerEnabled": true,
+    "tickerText": "Official OTSKY Store • Produk original • Belanja aman lewat kanal resmi • Promo terbatas minggu ini"
+  },
+  "categories": [
+    {
+      "active": true,
+      "order": 1,
+      "name": "T-Shirts",
+      "description": "Kaos harian dengan bahan nyaman untuk aktivitas santai.",
+      "image": "",
+      "link": "#produk"
+    },
+    {
+      "active": true,
+      "order": 2,
+      "name": "Polo Shirts",
+      "description": "Polo casual untuk tampilan lebih rapi tanpa terasa formal.",
+      "image": "",
+      "link": "#produk"
+    },
+    {
+      "active": true,
+      "order": 3,
+      "name": "Long Pants",
+      "description": "Celana casual untuk daily wear, kuliah, kerja, dan weekend.",
+      "image": "",
+      "link": "#produk"
+    }
+  ],
+  "products": [
+    {
+      "active": true,
+      "order": 1,
+      "name": "Kaos Font Signature",
+      "category": "T-Shirts",
+      "price": "Rp79.000",
+      "badge": "Best Seller",
+      "description": "Kaos cotton combed untuk outfit harian yang mudah dipadukan.",
+      "image": "",
+      "link": "https://shopee.co.id/otsky"
+    },
+    {
+      "active": true,
+      "order": 2,
+      "name": "Polo Basic OTSKY",
+      "category": "Polo Shirts",
+      "price": "Rp129.000",
+      "badge": "Casual Rapi",
+      "description": "Polo shirt simple untuk tampilan santai yang tetap clean.",
+      "image": "",
+      "link": "https://shopee.co.id/otsky"
+    },
+    {
+      "active": true,
+      "order": 3,
+      "name": "Celana Chino Casual",
+      "category": "Long Pants",
+      "price": "Rp159.000",
+      "badge": "Daily Wear",
+      "description": "Celana casual dengan siluet versatile untuk berbagai aktivitas.",
+      "image": "",
+      "link": "https://shopee.co.id/otsky"
+    }
+  ],
+  "promos": [
+    {
+      "active": true,
+      "order": 1,
+      "title": "Bundle Kaos Hemat",
+      "description": "Pilih beberapa kaos favorit dalam satu paket hemat.",
+      "badge": "Limited",
+      "image": "",
+      "buttonText": "Belanja Promo",
+      "buttonLink": "https://shopee.co.id/otsky"
+    },
+    {
+      "active": true,
+      "order": 2,
+      "title": "Official Store Deal",
+      "description": "Cek promo terbaru melalui kanal resmi OTSKY.",
+      "badge": "Official",
+      "image": "",
+      "buttonText": "Cek Store",
+      "buttonLink": "https://shopee.co.id/otsky"
+    }
+  ]
+}
